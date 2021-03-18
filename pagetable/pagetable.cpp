@@ -1,18 +1,26 @@
 #include <iostream>
 
-struct  LEVEL
-{
-};
 
 struct MAP
 {
-
+    int index;
+    bool validFrame;
 };
 
 struct PAGETABLE 
 {
     int levelCount;
-    unsigned int blah[10];
+    struct mask *bitMaskAry;
+    struct shift *shiftAry;
+    struct count *entryCount;
+};
+
+struct  LEVEL
+{
+    int DepthOfLevel;
+    PAGETABLE pageTable;
+    LEVEL** NextLevelPtr;
+    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
 };
 
 int main()
