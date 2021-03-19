@@ -8,18 +8,18 @@ struct MAP
 
 struct PAGETABLE 
 {
-    int levelCount;
-    int bitNum;
+    int levelCount; //number of levels in the system
+    int bitNum; //number of bits in an address
     unsigned int* numberOfBits; //number of bits per level
     unsigned int*bitMaskAry; //bit masks per level
     unsigned int*shiftAry; //bit shift per level
     int *entryCount; //entries per level
 
-    PAGETABLE(int levelCount, int bitNumber)
+    PAGETABLE(int levelCount, int bitNumber, unsigned int *levelBits)
     {
         this->levelCount = levelCount;
         this->bitNum = bitNumber;
-        numberOfBits = new unsigned int[this->levelCount];
+        numberOfBits = levelBits;
         bitMaskAry = new unsigned int[this->levelCount];
         shiftAry = new unsigned int[this->levelCount];
         entryCount = new int[this->levelCount];
