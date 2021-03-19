@@ -24,6 +24,16 @@ struct PAGETABLE
         shiftAry = new unsigned int[this->levelCount];
         entryCount = new int[this->levelCount];
     };
+
+    MAP* PageLookup(unsigned int LogicalAddress) 
+    {
+
+    }
+
+    void PageInsert(unsigned int LogicalAddress, unsigned int Frame) //Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
+    {
+
+    }
 };
 
 struct LEVEL//idk
@@ -38,14 +48,4 @@ unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsig
 {
     unsigned int pageNum;
     return pageNum;
-}
-
-MAP* PageLookup(PAGETABLE* PageTable, unsigned int LogicalAddress) 
-{
-
-}
-
-void PageInsert() 
-{
-
 }
