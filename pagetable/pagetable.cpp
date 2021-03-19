@@ -46,6 +46,6 @@ struct LEVEL//idk
 
 unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)//idek
 {
-    unsigned int pageNum;
+    unsigned int pageNum = 0;
     return pageNum;
 }
