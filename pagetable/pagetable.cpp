@@ -10,7 +10,7 @@ struct PAGETABLE
 {
     int levelCount; //number of levels in the system
     int bitNum; //number of bits in an address
-    unsigned int* numberOfBits; //number of bits per level
+    unsigned int*numberOfBits; //number of bits per level
     unsigned int*bitMaskAry; //bit masks per level
     unsigned int*shiftAry; //bit shift per level
     int *entryCount; //entries per level
@@ -31,6 +31,19 @@ struct PAGETABLE
     }
 
     void PageInsert(unsigned int LogicalAddress, unsigned int Frame) //Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
+    {
+
+    }
+
+    unsigned int* LevelMaskeCalc(unsigned int *bitsPerLev) 
+    {
+        for (int i = 0; i < sizeof(bitsPerLev); i++) 
+        {
+
+        }
+    }
+
+    unsigned int* ShiftAryCalc(unsigned int* bitsPerLev) 
     {
 
     }
