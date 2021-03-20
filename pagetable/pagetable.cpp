@@ -12,21 +12,22 @@ struct MAP
 struct PAGETABLE 
 {
     int levelCount; //number of levels in the system
-    int bitNum; //number of bits in an address
     unsigned int *numberOfBits; //number of bits per level
     unsigned int *bitMaskAry; //bit masks per level
     unsigned int *shiftAry; //bit shift per level
-    int *entryCount; //entries per level
+    int *entryCount; // EntryCount[i]: # of possible pages for level i 2^8 for example
 
-    PAGETABLE(int levelCount, int bitNumber, unsigned int *levelBits)
+    PAGETABLE(int levelCount, unsigned int *numberOfBits)
     {
-        this->levelCount = levelCount;
-        this->bitNum = bitNumber;
-        numberOfBits = levelBits;
-        bitMaskAry = new unsigned int[this->levelCount];
-        shiftAry = new unsigned int[this->levelCount];
-        ShiftAryCalc(numberOfBits,shiftAry);
+        this->levelCount = levelCount; //number of levels in the system; For example: 3 levels
+        this->numberOfBits = numberOfBits; //number of bits per level; For example: [8, 8, 8]
+        bitMaskAry = new unsigned int[this->levelCount]; //bit masks per level; This will set up an empty array of size levelCount that will hold unsigned ints
+        shiftAry = new unsigned int[this->levelCount]; // this will hold the bit shifts per level; For example: [24, 16, 8]
+        ShiftAryCalc(this->numberOfBits, shiftAry);
         entryCount = new int[this->levelCount];
+
+        for(int i = 0; i < sizeof())
+
     };
 
     MAP* PageLookup(unsigned int LogicalAddress) 
@@ -34,15 +35,21 @@ struct PAGETABLE
 
     }
 
-    void PageInsert(unsigned int LogicalAddress, unsigned int Frame) //Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
+    void PageInsert(unsigned int LogicalAddress, unsigned int Frame) // Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
     {
 
+    }
+    
+    unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
+    {
+        unsigned int pageNum = 0;
+        return pageNum;
     }
 
 private:
     unsigned int* LevelMaskCalc(unsigned int *bitsPerLev) 
     {
-        unsigned int tempBitMask = 0b00;
+        unsigned int tempBitMask = 0b0;
         int shift = 0;
         for (int i = 0; i < (sizeof(bitsPerLev)/bitsPerLev[0]); i++) 
         {
@@ -77,8 +84,4 @@ struct LEVEL//idk
     void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
 };
 
-unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)//idek
-{
-    unsigned int pageNum = 0;
-    return pageNum;
-}
+
