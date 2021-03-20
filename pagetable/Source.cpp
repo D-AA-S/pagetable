@@ -6,8 +6,10 @@
 
 int main(int argc, char** argv)
 {
-    int arguments = 0;
-    int weOutHere;
+    std::string outPutOp;
+    int memRefLim;
+    int weOutHere = 0;
+    int loop = 1;
 
     if (argc < 2) 
     {
@@ -19,14 +21,17 @@ int main(int argc, char** argv)
         switch (weOutHere)
         {
         case 'n':
-            std::cout << "bah" << std::endl;
+            memRefLim = atoi(argv[loop]);
+            std::cout << memRefLim << std::endl;
             break;
         case 'o':
-            std::cout << "FAH" << std::endl;
+            outPutOp = argv[loop];
+            std::cout << outPutOp << std::endl;
             break;
         default:
             std::cout << "wha" << std::endl; 
             break;
         }
     } 
+    return 0; 
 }
