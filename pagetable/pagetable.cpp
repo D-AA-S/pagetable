@@ -1,5 +1,7 @@
 #include <iostream>
 
+static int SYSTEMSIZE = 32;
+
 struct MAP
 {
     int index;
@@ -22,6 +24,7 @@ struct PAGETABLE
         numberOfBits = levelBits;
         bitMaskAry = new unsigned int[this->levelCount];
         shiftAry = new unsigned int[this->levelCount];
+        ShiftAryCalc(numberOfBits,shiftAry);
         entryCount = new int[this->levelCount];
     };
 
@@ -35,6 +38,7 @@ struct PAGETABLE
 
     }
 
+private:
     unsigned int* LevelMaskeCalc(unsigned int *bitsPerLev) 
     {
         for (int i = 0; i < sizeof(bitsPerLev); i++) 
@@ -43,9 +47,15 @@ struct PAGETABLE
         }
     }
 
-    unsigned int* ShiftAryCalc(unsigned int* bitsPerLev) 
+    unsigned int* ShiftAryCalc(unsigned int* bitsPerLev, unsigned int* newShiftAry)
     {
-
+        int fuck = 0;
+        for (int i = 0; i < sizeof(bitsPerLev); i++) 
+        {
+            newShiftAry[i] = SYSTEMSIZE - bitsPerLev[i] - fuck;
+            fuck += bitsPerLev[i];
+        }
+        return newShiftAry;
     }
 };
 
