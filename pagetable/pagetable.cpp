@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 static int SYSTEMSIZE = 32;
 
@@ -12,9 +13,9 @@ struct PAGETABLE
 {
     int levelCount; //number of levels in the system
     int bitNum; //number of bits in an address
-    unsigned int*numberOfBits; //number of bits per level
-    unsigned int*bitMaskAry; //bit masks per level
-    unsigned int*shiftAry; //bit shift per level
+    unsigned int *numberOfBits; //number of bits per level
+    unsigned int *bitMaskAry; //bit masks per level
+    unsigned int *shiftAry; //bit shift per level
     int *entryCount; //entries per level
 
     PAGETABLE(int levelCount, int bitNumber, unsigned int *levelBits)
@@ -41,16 +42,22 @@ struct PAGETABLE
 private:
     unsigned int* LevelMaskCalc(unsigned int *bitsPerLev) 
     {
-        for (int i = 0; i < sizeof(bitsPerLev); i++) 
+        unsigned int tempBitMask = 0x00000000;
+        for (int i = 0; i < (sizeof(bitsPerLev)/bitsPerLev[0]); i++) 
         {
-
+            for (int j = (bitsPerLev[i] / 4); j > 0; j--) {
+                tempBitMask | 0xF;
+                tempBitMask << 4;
+            }
+            tempBitMask |= 
+            bitMaskAry[i] = 
         }
     }
 
     unsigned int* ShiftAryCalc(unsigned int* bitsPerLev, unsigned int* newShiftAry)
     {
         int fuck = 0;
-        for (int i = 0; i < sizeof(bitsPerLev); i++) 
+        for (int i = 0; i < sizeof(bitsPerLev)/bitsPerLev[0]; i++) 
         {
             newShiftAry[i] = SYSTEMSIZE - bitsPerLev[i] - fuck;
             fuck += bitsPerLev[i];
