@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #include <unistd.h>
 #include "pagetable.h"
 #include "byutr.h"
@@ -9,7 +10,8 @@ int main(int argc, char** argv)
 {
     FILE* inputFile;
     p2AddrTr traceItem;
-    unsigned int* levels;
+    bool complete = false;
+    std::vector<unsigned int> levels;
     int levelNum = 0;
     std::string outPutOp = "";
     int memRefLim;
@@ -39,11 +41,9 @@ int main(int argc, char** argv)
         }
     }
     levelNum = argc - optind - 2;
-    levels = new unsigned int[levelNum];
-    for(int i = optind+1, a = 0; i < argc; i++,a++)
+    for(int i = optind+1; i < argc; i++)
     {
-        levels[a] = atoi(argv[i]);
-        std::cout << levels[a] << std::endl; 
+        levels.push_back(atoi(argv[i]));
     }
     //PAGETABLE *test = new PAGETABLE(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
@@ -62,7 +62,15 @@ int main(int argc, char** argv)
     }
     else 
     {
-        while()
+        while (!complete) 
+        {
+            int weThereYet = NextAddress(inputFile, &traceItem);
+            complete = (weThereYet == 0);
+            if (!complete) 
+            {
+                std::cout << "Address: " << traceItem.addr << std::endl;
+            }
+        }
     }
 
     if (outPutOp != "")
