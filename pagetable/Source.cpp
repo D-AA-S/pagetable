@@ -9,7 +9,7 @@ int main(int argc, char** argv)
     std::string outPutOp;
     int memRefLim;
     int weOutHere = 0;
-    int loop = 1;
+    int pathing = 0;
 
     if (argc < 2) 
     {
@@ -21,17 +21,18 @@ int main(int argc, char** argv)
         switch (weOutHere)
         {
         case 'n':
-            memRefLim = atoi(argv[loop]);
-            std::cout << memRefLim << std::endl;
+            memRefLim = atoi(optarg);
+            pathing += 2;
             break;
         case 'o':
-            outPutOp = argv[loop];
-            std::cout << outPutOp << std::endl;
+            outPutOp = optarg;
+            pathing += 2;
             break;
         default:
             std::cout << "wha" << std::endl; 
             break;
         }
     } 
+    std::cout << argv[optind] << std::endl;
     return 0; 
 }
