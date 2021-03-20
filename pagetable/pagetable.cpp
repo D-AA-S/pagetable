@@ -39,7 +39,7 @@ struct PAGETABLE
     }
 
 private:
-    unsigned int* LevelMaskeCalc(unsigned int *bitsPerLev) 
+    unsigned int* LevelMaskCalc(unsigned int *bitsPerLev) 
     {
         for (int i = 0; i < sizeof(bitsPerLev); i++) 
         {

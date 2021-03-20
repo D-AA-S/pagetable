@@ -26,5 +26,6 @@ int main(int argc, char** argv)
         default:
             break;
         }
+        std::cout << weOutHere << std::endl;
     } 
 }
