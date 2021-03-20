@@ -22,11 +22,13 @@ struct PAGETABLE
         this->levelCount = levelCount; //number of levels in the system; For example: 3 levels
         this->numberOfBits = numberOfBits; //number of bits per level; For example: [8, 8, 8]
         bitMaskAry = new unsigned int[this->levelCount]; //bit masks per level; This will set up an empty array of size levelCount that will hold unsigned ints
+        bitMaskAry = LevelMaskCalc(this->numberOfBits);
         shiftAry = new unsigned int[this->levelCount]; // this will hold the bit shifts per level; For example: [24, 16, 8]
         ShiftAryCalc(this->numberOfBits, shiftAry);
         entryCount = new int[this->levelCount];
 
-        for(int i = 0; i < sizeof())
+        for (int i = 0; i < levelCount; i++)
+            entryCount[i] = pow(2, numberOfBits[i]);
 
     };
 
