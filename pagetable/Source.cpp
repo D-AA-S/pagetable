@@ -1,12 +1,14 @@
 #include <iostream>
 #include <stdio.h>
-#include <vector>
 #include <stdlib.h>
 #include <unistd.h>
 #include "pagetable.h"
+#include "byutr.h"
 
 int main(int argc, char** argv)
 {
+    FILE* inputFile;
+    p2AddrTr traceItem;
     unsigned int* levels;
     int levelNum = 0;
     std::string outPutOp = "";
@@ -43,11 +45,12 @@ int main(int argc, char** argv)
         levels[a] = atoi(argv[i]);
         std::cout << levels[a] << std::endl; 
     }
-    PAGETABLE test = new PAGETABLE(levelNum, levels);
-
-    if (outPutOp != "") 
+    //PAGETABLE *test = new PAGETABLE(levelNum, levels);
+    inputFile = fopen(argv[optind], "r");
+    if(inputFile = NULL)
     {
-
+        std::cout << "File either does not exsist or is unopenable" << std::endl;
+        return -1; 
     }
 
     if (memRefLim > 0) 
@@ -56,6 +59,15 @@ int main(int argc, char** argv)
         {
 
         }
+    }
+    else 
+    {
+        while()
+    }
+
+    if (outPutOp != "")
+    {
+
     }
     return 0; 
 }
