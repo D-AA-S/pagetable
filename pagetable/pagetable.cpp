@@ -42,16 +42,19 @@ struct PAGETABLE
 private:
     unsigned int* LevelMaskCalc(unsigned int *bitsPerLev) 
     {
-        unsigned int tempBitMask = 0x00000000;
+        unsigned int tempBitMask = 0b00;
+        int shift = 0;
         for (int i = 0; i < (sizeof(bitsPerLev)/bitsPerLev[0]); i++) 
         {
-            for (int j = (bitsPerLev[i] / 4); j > 0; j--) {
-                tempBitMask | 0xF;
-                tempBitMask << 4;
+            for (int j = bitsPerLev[i]; j > 0; j--) {
+                tempBitMask | 0b1;
+                tempBitMask << 1;
             }
-            tempBitMask |= 
-            bitMaskAry[i] = 
+            tempBitMask << SYSTEMSIZE - bitsPerLev[i] - shift;
+            shift += bitsPerLev[i];
+            bitMaskAry[i] = tempBitMask;
         }
+        return bitMaskAry;
     }
 
     unsigned int* ShiftAryCalc(unsigned int* bitsPerLev, unsigned int* newShiftAry)
