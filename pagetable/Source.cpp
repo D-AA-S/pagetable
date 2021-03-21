@@ -56,18 +56,20 @@ int main(int argc, char** argv)
         std::cout << "File either does not exsist or is unopenable" << std::endl;
         return -1;
     }
+    else
+        std::cout << "file is openable" << std::endl; 
 
     if (memRefLim > 0)
     {
         for (int i = 0; i < memRefLim; i++)
         {
-            NextAddress(inputFile, &traceItem);
-            std::cout << ("Address %d:",i+1) << traceItem.addr << std::endl;
+            //NextAddress(inputFile, &traceItem);
+            //std::cout << ("Address %d:",i+1) << traceItem.addr << std::endl;
         }
     }
     else
     {
-        while (!complete)
+        /*while (!complete)
         {
             int weThereYet = NextAddress(inputFile, &traceItem);
             complete = (weThereYet == 0);
@@ -75,7 +77,7 @@ int main(int argc, char** argv)
             {
                 std::cout << "Address: " << traceItem.addr << std::endl;
             }
-        }
+        }*/
     }
 
     switch (outPutOp)

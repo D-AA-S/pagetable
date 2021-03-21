@@ -10,6 +10,34 @@ struct MAP
     bool validFrame;
 };
 
+struct PAGETABLE;
+
+struct LEVEL//idk
+{
+    int DepthOfLevel;   // Which level is this?
+    PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
+    LEVEL** NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
+    MAP* MapPtr;
+
+    LEVEL() {
+
+    };
+
+    LEVEL(int depth, PAGETABLE* PageTable, std::vector<LEVEL*>* NextLevelPtr)
+    {
+        DepthOfLevel = depth;
+        PageTablePtr = PageTable;
+    };
+
+    LEVEL(int depth, PAGETABLE* PageTable, std::vector<MAP>* MapPtr)
+    {
+        DepthOfLevel = depth;
+        PageTablePtr = PageTable;
+    };
+
+    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
+};
+
 struct PAGETABLE 
 {
     LEVEL* RootNodePtr; // Contains the address of LEVEL 0
@@ -88,30 +116,6 @@ private:
     }
 };
 
-struct LEVEL//idk
-{
-    int DepthOfLevel;   // Which level is this?
-    PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
-    LEVEL** NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
-    MAP* MapPtr;
 
-    LEVEL() {
-
-    };
-
-    LEVEL(int depth, PAGETABLE* PageTable, std::vector<LEVEL*>* NextLevelPtr)
-    {
-        DepthOfLevel = depth;
-        PageTablePtr = PageTable;
-    };
-
-    LEVEL(int depth, PAGETABLE* PageTable, std::vector<MAP>* MapPtr)
-    {
-        DepthOfLevel = depth;
-        PageTablePtr = PageTable;
-    };
-
-    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
-};
 
 
