@@ -46,7 +46,8 @@ int main(int argc, char** argv)
     }
     for (int i = optind + 1; i < argc; i++)
     {
-        levels.push_back(atoi(argv[i]));
+        std::cout << argv[i] << std::endl; 
+        //levels.push_back(atoi(argv[i]));
     }
     
     PAGETABLE test(levelNum, levels);
@@ -83,7 +84,7 @@ int main(int argc, char** argv)
     switch (outPutOp)
     {
     case 'B':
-        //code for bitmasks output option
+        report_bitmasks(test.levelCount, test.bitMaskArray);
         break;
     case 'L':
         //code for Logical2physical option
