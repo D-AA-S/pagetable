@@ -40,7 +40,6 @@ int main(int argc, char** argv)
             break;
         }
     }
-    levelNum = argc - optind - 2;
     for(int i = optind+1; i < argc; i++)
     {
         levels.push_back(atoi(argv[i]));
