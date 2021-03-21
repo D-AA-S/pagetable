@@ -16,9 +16,9 @@ int main(int argc, char** argv)
     p2AddrTr traceItem;;
     bool complete = false;
     std::vector<unsigned int> levels;
-    int levelNum = 0;
+    int levelNum = -1;
     char outPutOp = 'S';
-    int memRefLim;
+    int memRefLim = 0;
     int weOutHere = 0;
     int pathing = 0;
 
@@ -40,19 +40,17 @@ int main(int argc, char** argv)
             pathing += 2;
             break;
         default:
-            std::cout << "wha" << std::endl;
             break;
         }
     }
-    for (int i = optind + 1; i < argc; i++)
+    for (int i = optind+1; i < argc; i++)
     {
-        std::cout << argv[i] << std::endl; 
-        //levels.push_back(atoi(argv[i]));
+        levels.push_back(atoi(argv[i]));
+        levelNum++;
     }
-    
     PAGETABLE test(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
-    if (inputFile = NULL)
+    if (inputFile == NULL)
     {
         std::cout << "File either does not exsist or is unopenable" << std::endl;
         return -1;
@@ -64,13 +62,13 @@ int main(int argc, char** argv)
     {
         for (int i = 0; i < memRefLim; i++)
         {
-            //NextAddress(inputFile, &traceItem);
-            //std::cout << ("Address %d:",i+1) << traceItem.addr << std::endl;
+            NextAddress(inputFile, &traceItem);
+            std::cout << "Address: " << traceItem.addr << std::endl;
         }
     }
     else
     {
-        /*while (!complete)
+        while (!complete)
         {
             int weThereYet = NextAddress(inputFile, &traceItem);
             complete = (weThereYet == 0);
@@ -78,13 +76,13 @@ int main(int argc, char** argv)
             {
                 std::cout << "Address: " << traceItem.addr << std::endl;
             }
-        }*/
+        }
     }
 
     switch (outPutOp)
     {
     case 'B':
-        report_bitmasks(test.levelCount, test.bitMaskArray);
+        //report_bitmasks(test.levelCount, test.bitMaskArray);
         break;
     case 'L':
         //code for Logical2physical option
