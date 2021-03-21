@@ -139,10 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="byu_tracereader.c" />
+    <ClCompile Include="output_mode_helpers.c" />
     <ClCompile Include="pagetable.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="byutr.h" />
+    <ClInclude Include="output_mode_helpers.h" />
     <ClInclude Include="pagetable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

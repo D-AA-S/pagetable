@@ -21,9 +21,21 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="byu_tracereader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="output_mode_helpers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pagetable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="byutr.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="output_mode_helpers.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
