@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     bool complete = false;
     std::vector<unsigned int> levels;
     int levelNum = 0;
-    std::string outPutOp = "";
+    char outPutOp = 'S';
     int memRefLim;
     int weOutHere = 0;
     int pathing = 0;
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
             pathing += 2;
             break;
         case 'o':
-            outPutOp = optarg;
+            outPutOp = toupper(optarg[0]);
             pathing += 2;
             break;
         default:
@@ -57,7 +57,8 @@ int main(int argc, char** argv)
     {
         for (int i = 0; i < memRefLim; i++)
         {
-
+            NextAddress(inputFile, &traceItem);
+            std::cout << ("Address %d:",i+1) << traceItem.addr << std::endl;
         }
     }
     else
@@ -73,9 +74,23 @@ int main(int argc, char** argv)
         }
     }
 
-    if (outPutOp != "")
+    switch (outPutOp)
     {
-
+    case 'B':
+        //code for bitmasks output option
+        break;
+    case 'L':
+        //code for Logical2physical option
+        break;
+    case 'P':
+        //code for page2frame option
+        break;
+    case 'O':
+        //code for offest option
+        break;
+    default:
+        //code for summary when nothing is selected
+        break;
     }
     return 0;
 }
