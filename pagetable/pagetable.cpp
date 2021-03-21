@@ -10,14 +10,12 @@ struct MAP
     bool validFrame;
 };
 
-struct PAGETABLE;
-
 struct LEVEL//idk
 {
     int DepthOfLevel;   // Which level is this?
     PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
-    LEVEL** NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
-    MAP* MapPtr;
+    std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
+    std::vector<MAP>* MapPtr;
 
     LEVEL() {
 
@@ -27,15 +25,20 @@ struct LEVEL//idk
     {
         DepthOfLevel = depth;
         PageTablePtr = PageTable;
+        this->NextLevelPtr = NextLevelPtr;
     };
 
     LEVEL(int depth, PAGETABLE* PageTable, std::vector<MAP>* MapPtr)
     {
         DepthOfLevel = depth;
         PageTablePtr = PageTable;
+        this->MapPtr = MapPtr;
     };
 
-    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
+    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame)
+    {
+
+    }
 };
 
 struct PAGETABLE 
@@ -48,6 +51,9 @@ struct PAGETABLE
     std::vector<unsigned int> shiftArray; //bit shift per level
     std::vector<int> entryCount; // EntryCount[i]: # of possible pages for level i 2^8 for example
 
+    std::vector<MAP> maps;
+    std::vector<LEVEL*> nextLevel;
+
     PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
     {
         levelCount = levCount; //number of levels in the system; For example: 3 levels
@@ -59,12 +65,12 @@ struct PAGETABLE
             entryCount[i] = pow(2, numberOfBits[i]);
 
         if (levelCount == 1) {  // We don't need nextLevel ptrs. Have it point directly to the Map
-            std::vector<MAP> maps(entryCount[0]);   // Create a dynamic array of size entryCount[i] that contains MAPs
+            maps.resize(entryCount[0]);   // Create a dynamic array of size entryCount[i] that contains MAPs
             std::vector<MAP>* mapPtr = &maps;
             RootNodePtr = &LEVEL(0, this, mapPtr); // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
         }
         else {  // Setup Level 0
-            std::vector<LEVEL*> nextLevel(entryCount[0]);   // Create a dynamic array of size entryCount[i] that contains LEVEL pointers
+            nextLevel.resize(entryCount[0]);  // Create a dynamic array of size entryCount[i] that contains LEVEL pointers
             std::vector<LEVEL*>* nextLevelPtr = &nextLevel; // Assign the address of the dynamic array of LEVEL pointers to another pointer "nextLevelPtr"
             RootNodePtr = &LEVEL(0, this, nextLevelPtr); // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
         }
@@ -115,7 +121,5 @@ private:
         }
     }
 };
-
-
 
 
