@@ -6,6 +6,8 @@ struct MAP
     bool validFrame;
 };
 
+struct PAGETABLE;
+
 struct LEVEL
 {
     int DepthOfLevel;

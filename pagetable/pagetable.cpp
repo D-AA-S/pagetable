@@ -10,6 +10,8 @@ struct MAP
     bool validFrame;
 };
 
+struct PAGETABLE;
+
 struct LEVEL//idk
 {
     int DepthOfLevel;   // Which level is this?
