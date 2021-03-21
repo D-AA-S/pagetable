@@ -48,7 +48,8 @@ int main(int argc, char** argv)
     {
         levels.push_back(atoi(argv[i]));
     }
-    //PAGETABLE *test = new PAGETABLE(levelNum, levels);
+    
+    PAGETABLE test(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
     if (inputFile = NULL)
     {
