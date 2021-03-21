@@ -10,14 +10,18 @@ struct PAGETABLE;
 
 struct LEVEL
 {
-    int DepthOfLevel;
-    PAGETABLE pageTable;
-    LEVEL** NextLevelPtr;
-    MAP* MapPtr;
+    int DepthOfLevel;   // Which level is this?
+    PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
+    std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
+    std::vector<MAP>* MapPtr;
+
+    std::vector<LEVEL*> nextLevel;
+    std::vector<MAP> maps;
 
     LEVEL();
-    LEVEL(int depth, PAGETABLE* PageTable, std::vector<LEVEL*>* NextLevelPtr);
-    LEVEL(int depth, PAGETABLE* PageTable, std::vector<MAP>* MapPtr);
+
+    LEVEL(int depth, PAGETABLE* PageTable, int entryCount);
+
     void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
 };
 
@@ -29,9 +33,6 @@ struct PAGETABLE {
     std::vector<unsigned int> bitMaskArray; //bit masks per level
     std::vector<unsigned int> shiftArray; //bit shift per level
     std::vector<int> entryCount; // EntryCount[i]: # of possible pages for level i 2^8 for example
-
-    std::vector<MAP> maps;
-    std::vector<LEVEL*> nextLevel;
 
     PAGETABLE(int levCount, std::vector<unsigned int> numOfBits);
     MAP* PageLookup(unsigned int LogicalAddress);
