@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <algorithm>
 #include <unistd.h>
 #include "pagetable.h"
 extern "C"
@@ -10,11 +11,14 @@ extern "C"
 }
 #include "output_mode_helpers.h"
 
-
+/*Receives optional argument from main function, and converts cmdLineArg to lowercase only
+to accurately parse what optional argument is being inputted*/
 void optionals(OutputOptionsType *input, std::string cmdLineArg) 
 {
-    input->summary = false;
-    if (cmdLineArg.compare("bitmasks")) 
+    std::transform(cmdLineArg.begin(), cmdLineArg.end(), cmdLineArg.begin(), ::tolower);
+    input->summary = false, input->bitmasks = false, input->logical2physical = false, 
+        input->offset = false, input->page2frame = false;
+    if (cmdLineArg == ("bitmasks"))
     {input->bitmasks = true;}
     else if (cmdLineArg.compare("logical2physical")) 
     {input->logical2physical = true;}
@@ -33,17 +37,16 @@ void optionals(OutputOptionsType *input, std::string cmdLineArg)
 
 int main(int argc, char** argv)
 {
-    OutputOptionsType arguments;
-    arguments.summary = true;
-    FILE* inputFile;
-    p2AddrTr traceItem;;
-    bool complete = false;
-    std::vector<unsigned int> levels;
-    int memRefLim = 0, argVal = 0, levelNum = 0;/*Captures command line argument values*/
+    OutputOptionsType arguments; //Structure that keeps track of optional arguments
+    FILE* inputFile; //Stores the file argument from the command line
+    p2AddrTr traceItem; //Used for the Next Address function
+    bool complete = false; //Boolean to track file scanning process
+    std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
+    int memRefLim = 0, argVal = 0, levelNum = 0;//Captures command line argument values
 
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cout << "Please enter a file" << std::endl;
+        std::cout << "Please enter a file & amount of bits for single/multiple levels" << std::endl;
         exit(EXIT_FAILURE);
     }
     while ((argVal = getopt(argc, argv, "n:o:")) != -1)
@@ -57,9 +60,12 @@ int main(int argc, char** argv)
             optionals(&arguments,optarg);
             break;
         default:
+            std::cout << "Invalid optional argument" << std::endl;
+            exit(EXIT_FAILURE);
             break;
         }
     }
+
     for (int i = optind+1; i < argc; i++)
     {
         levels.push_back(atoi(argv[i]));
@@ -78,7 +84,7 @@ int main(int argc, char** argv)
         for (int i = 0; i < memRefLim; i++)
         {
             NextAddress(inputFile, &traceItem);
-            std::cout << "Address: " << traceItem.addr << std::endl;
+            std::cout << "Address: " << std::hex << traceItem.addr << std::endl;
         }
     }
     else
@@ -96,7 +102,7 @@ int main(int argc, char** argv)
     }
 
     if (arguments.bitmasks) {
-        uint32_t* convert;        /*uin32_t array that stores bitmask vector data to be used in report_bitmasks function*/
+        uint32_t* convert;        //uin32_t array that stores bitmask vector data to be used in report_bitmasks function
         convert = new uint32_t[test.GetBitMask().size()];
         for (int i = 0; i < test.GetBitMask().size(); i++)
         {
