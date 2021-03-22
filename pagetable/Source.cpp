@@ -7,8 +7,8 @@
 extern "C"
 {
 #include "byutr.h"
-#include "output_mode_helpers.h"
 }
+#include "output_mode_helpers.h"
 
 int main(int argc, char** argv)
 {
