@@ -10,19 +10,41 @@ extern "C"
 }
 #include "output_mode_helpers.h"
 
+
+void optionals(OutputOptionsType *input, std::string cmdLineArg) 
+{
+    input->summary = false;
+    if (cmdLineArg.compare("bitmasks")) 
+    {input->bitmasks = true;}
+    else if (cmdLineArg.compare("logical2physical")) 
+    {input->logical2physical = true;}
+    else if (cmdLineArg.compare("page2frame"))
+    {input->page2frame = true;}
+    else if (cmdLineArg.compare("offset"))
+    {input->offset = true;}
+    else 
+    {
+        std::cout << "-o argument inputted invalid, please enter valid input" << std::endl; 
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+
 int main(int argc, char** argv)
 {
+    OutputOptionsType arguments;
+    arguments.summary = true;
     FILE* inputFile;
     p2AddrTr traceItem;;
     bool complete = false;
     std::vector<unsigned int> levels;
-    char outPutOp = 'S'; /*Captures what optional output argument is received*/
     int memRefLim = 0, argVal = 0, levelNum = 0;/*Captures command line argument values*/
 
     if (argc < 2)
     {
         std::cout << "Please enter a file" << std::endl;
-        return -1;
+        exit(EXIT_FAILURE);
     }
     while ((argVal = getopt(argc, argv, "n:o:")) != -1)
     {
@@ -32,7 +54,7 @@ int main(int argc, char** argv)
             memRefLim = atoi(optarg);
             break;
         case 'o':
-            outPutOp = toupper(optarg[0]);
+            optionals(&arguments,optarg);
             break;
         default:
             break;
@@ -48,7 +70,7 @@ int main(int argc, char** argv)
     if (inputFile == NULL)
     {
         std::cout << "File either does not exsist or is unopenable" << std::endl;
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     if (memRefLim > 0)
@@ -63,6 +85,7 @@ int main(int argc, char** argv)
     {
         while (!complete)
         {
+            memRefLim++;
             int weThereYet = NextAddress(inputFile, &traceItem);
             complete = (weThereYet == 0);
             if (!complete)
@@ -72,16 +95,16 @@ int main(int argc, char** argv)
         }
     }
 
-    switch (outPutOp)
-    {
-    case 'B':
-        uint32_t * convert;        /*uin32_t array that stores bitmask vector data to be used in report_bitmasks function*/
+    if (arguments.bitmasks) {
+        uint32_t* convert;        /*uin32_t array that stores bitmask vector data to be used in report_bitmasks function*/
         convert = new uint32_t[test.GetBitMask().size()];
-        for (int i = 0; i < test.GetBitMask().size();i++) 
-        {convert[i] = (uint32_t)test.GetBitMask().at(i);}
+        for (int i = 0; i < test.GetBitMask().size(); i++)
+        {
+            convert[i] = (uint32_t)test.GetBitMask().at(i);
+        }
         report_bitmasks(test.levelCount, convert);
-        break;
-    case 'L':
+    }
+    /*case 'L':
         //code for Logical2physical option
         break;
     case 'P':
@@ -93,6 +116,6 @@ int main(int argc, char** argv)
     default:
         //code for summary when nothing is selected
         break;
-    }
-    return 0;
+    }*/
+    exit(EXIT_SUCCESS);
 }
