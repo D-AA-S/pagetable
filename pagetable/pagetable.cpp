@@ -80,9 +80,9 @@ void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
             tempBitMask <<= 1;
             tempBitMask |= 0b1;
         }
-        std::cout << std::bitset<32>(tempBitMask) << std::endl;
+        //std::cout << std::bitset<32>(tempBitMask) << std::endl;     //Just testing to make sure the bitmask is set properly
         tempBitMask <<= SYSTEMSIZE - bitsPerLev[i] - shift;
-        std::cout << std::bitset<32>(tempBitMask) << std::endl;
+        //std::cout << std::bitset<32>(tempBitMask) << std::endl;
         shift += bitsPerLev[i];
         bitMaskArray.push_back(tempBitMask);
         tempBitMask = 0;
