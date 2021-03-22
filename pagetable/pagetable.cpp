@@ -3,10 +3,11 @@
 #include <cmath>
 
 #include "pagetable.h"
+#include <bitset>
 
 static int SYSTEMSIZE = 32;
-   
-LEVEL::LEVEL() 
+
+LEVEL::LEVEL()
 {
 
 };
@@ -15,7 +16,7 @@ LEVEL::LEVEL(int depth, PAGETABLE* PageTable, int entryCount)
 {
     DepthOfLevel = depth;
     PageTablePtr = PageTable;
-        
+
     if (PageTablePtr->levelCount == 1) // We don't need nextLevel ptrs. Have it point directly to the Map
     {
         maps.resize(entryCount);
@@ -32,7 +33,7 @@ void LEVEL::PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsign
 {
 
 }
-    
+
 PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
 {
     levelCount = levCount; //number of levels in the system; For example: 3 levels
@@ -41,50 +42,59 @@ PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
     ShiftAryCalc(numberOfBits);     // Assigns the shiftArray with the appropriate bits to shift per level; For example: [24, 16, 8]
 
     for (int i = 0; i < levelCount; i++)    // Assigns the entryCount vector with the number of possible pages per level
-        entryCount[i] = pow(2, numberOfBits[i]);
+        entryCount.push_back(pow(2, numberOfBits[i]));
 
     // Setup Level 0
-    *RootNodePtr = LEVEL(0, this, entryCount[0]); // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
+
+    LEVEL root(0, this, entryCount[0]);
+    RootNodePtr = &root; // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
 };
 
-MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) 
+/*
+MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress)
 {
-
+    return 0;
 }
+*/
 
 void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
 {
-
+    return;
 }
-    
+
 unsigned int PAGETABLE::LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
 {
-    //unsigned int pageNum = 0;
-    //return pageNum;
+    unsigned int pageNum = 0;
+    return pageNum;
 }
+
 
 void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
 {
     unsigned int tempBitMask = 0b0;
+    unsigned int temp;
     int shift = 0;
-    for (int i = 0; i < bitsPerLev.size(); i++) 
+    for (int i = 0; i < bitsPerLev.size(); i++)
     {
         for (int j = bitsPerLev[i]; j > 0; j--) {
-            tempBitMask | 0b1;
-            tempBitMask << 1;
+            tempBitMask <<= 1;
+            tempBitMask |= 0b1;
         }
-        tempBitMask << SYSTEMSIZE - bitsPerLev[i] - shift;
+        std::cout << std::bitset<32>(tempBitMask) << std::endl;
+        tempBitMask <<= SYSTEMSIZE - bitsPerLev[i] - shift;
+        std::cout << std::bitset<32>(tempBitMask) << std::endl;
         shift += bitsPerLev[i];
-        bitMaskArray[i] = tempBitMask;
+        bitMaskArray.push_back(tempBitMask);
+        tempBitMask = 0;
     }
 }
 
 void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
 {
     int fuck = 0;
-    for (int i = 0; i < bitsPerLev.size(); i++) 
+    for (int i = 0; i < bitsPerLev.size(); i++)
     {
-        shiftArray[i] = SYSTEMSIZE - bitsPerLev[i] - fuck;
+        shiftArray.push_back(SYSTEMSIZE - bitsPerLev[i] - fuck);
         fuck += bitsPerLev[i];
     }
 }
