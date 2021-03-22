@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     bool complete = false;
     std::vector<unsigned int> levels;
     char outPutOp = 'S'; /*Captures what optional output argument is received*/
-    int memRefLim = 0, argVal = 0, levelNum = -1;/*Captures command line argument values*/
+    int memRefLim = 0, argVal = 0, levelNum = 0;/*Captures command line argument values*/
 
     if (argc < 2)
     {
@@ -50,8 +50,6 @@ int main(int argc, char** argv)
         std::cout << "File either does not exsist or is unopenable" << std::endl;
         return -1;
     }
-    else
-        std::cout << "file is openable" << std::endl; 
 
     if (memRefLim > 0)
     {
@@ -78,7 +76,10 @@ int main(int argc, char** argv)
     {
     case 'B':
         uint32_t * convert;        /*uin32_t array that stores bitmask vector data to be used in report_bitmasks function*/
-        report_bitmasks(test.levelCount, std::copy(test.GetBitMask().begin(), test.GetBitMask().end(), convert));
+        convert = new uint32_t[test.GetBitMask().size()];
+        for (int i = 0; i < test.GetBitMask().size();i++) 
+        {convert[i] = (uint32_t)test.GetBitMask().at(i);}
+        report_bitmasks(test.levelCount, convert);
         break;
     case 'L':
         //code for Logical2physical option
