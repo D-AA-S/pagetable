@@ -46,6 +46,6 @@ public:
     unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift);
     void LevelMaskCalc(std::vector<unsigned int> bitsPerLev);
     void ShiftAryCalc(std::vector<unsigned int> bitsPerLev);
-    std::vector<unsigned int>* GetBitMask();
+    std::vector<unsigned int> GetBitMask();
 };
 

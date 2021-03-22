@@ -16,12 +16,8 @@ int main(int argc, char** argv)
     p2AddrTr traceItem;;
     bool complete = false;
     std::vector<unsigned int> levels;
-    
-    /*Captures what optional output argument is received*/
-    char outPutOp = 'S';
-
-    /*Captures command line argument values*/
-    int memRefLim = 0, argVal = 0, levelNum = -1;
+    char outPutOp = 'S'; /*Captures what optional output argument is received*/
+    int memRefLim = 0, argVal = 0, levelNum = -1;/*Captures command line argument values*/
 
     if (argc < 2)
     {
@@ -81,7 +77,8 @@ int main(int argc, char** argv)
     switch (outPutOp)
     {
     case 'B':
-        //report_bitmasks(test.levelCount, );
+        uint32_t * convert;        /*uin32_t array that stores bitmask vector data to be used in report_bitmasks function*/
+        report_bitmasks(test.levelCount, std::copy(test.GetBitMask().begin(), test.GetBitMask().end(), convert));
         break;
     case 'L':
         //code for Logical2physical option
