@@ -89,3 +89,11 @@ void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
     }
 }
 
+std::vector<unsigned int>* PAGETABLE::GetBitMask() 
+{
+    for (int i = 0;bitMaskArray.size(); i++) 
+    {
+        std::cout << bitMaskArray[i] <<std::endl;
+    }
+    return &bitMaskArray;
+}

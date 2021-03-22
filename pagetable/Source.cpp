@@ -16,28 +16,27 @@ int main(int argc, char** argv)
     p2AddrTr traceItem;;
     bool complete = false;
     std::vector<unsigned int> levels;
-    int levelNum = -1;
+    
+    /*Captures what optional output argument is received*/
     char outPutOp = 'S';
-    int memRefLim = 0;
-    int weOutHere = 0;
-    int pathing = 0;
+
+    /*Captures command line argument values*/
+    int memRefLim = 0, argVal = 0, levelNum = -1;
 
     if (argc < 2)
     {
         std::cout << "Please enter a file" << std::endl;
         return -1;
     }
-    while ((weOutHere = getopt(argc, argv, "n:o:")) != -1)
+    while ((argVal = getopt(argc, argv, "n:o:")) != -1)
     {
-        switch (weOutHere)
+        switch (argVal)
         {
         case 'n':
             memRefLim = atoi(optarg);
-            pathing += 2;
             break;
         case 'o':
             outPutOp = toupper(optarg[0]);
-            pathing += 2;
             break;
         default:
             break;
@@ -82,7 +81,7 @@ int main(int argc, char** argv)
     switch (outPutOp)
     {
     case 'B':
-        //report_bitmasks(test.levelCount, test.bitMaskArray);
+        //report_bitmasks(test.levelCount, );
         break;
     case 'L':
         //code for Logical2physical option
