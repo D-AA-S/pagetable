@@ -29,7 +29,7 @@ LEVEL::LEVEL(int depth, PAGETABLE* PageTable, int entryCount)
     }
 };
 
-void LEVEL::PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame)
+void LEVEL::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame)
 {
 
 }
@@ -50,12 +50,17 @@ PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
     RootNodePtr = &root; // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
 };
 
-/*
 MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress)
 {
-    return 0;
+    MAP* map;
+    LEVEL* current = RootNodePtr;   // Need to finish writing this for loop to look up the pages
+    for (int i = 0; i < levelCount; i++)
+    {
+        unsigned int page = LogicalToPage(LogicalAddress, bitMaskArray[i], shiftArray[i]);
+        current->NextLevelPtr->at(page);
+    }
 }
-*/
+
 
 void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
 {
@@ -64,10 +69,10 @@ void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // U
 
 unsigned int PAGETABLE::LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
 {
-    unsigned int pageNum = 0;
-    return pageNum;
+    unsigned int page = LogicalAddress & Mask;
+    page >>= Shift;
+    return page;    // returns an unsigned int containing the pageNumber. Check to see if a LEVEL exists in the array of LEVEL pointers
 }
-
 
 void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
 {
@@ -91,11 +96,11 @@ void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
 
 void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
 {
-    int fuck = 0;
+    int shift = 0;
     for (int i = 0; i < bitsPerLev.size(); i++)
     {
-        shiftArray.push_back(SYSTEMSIZE - bitsPerLev[i] - fuck);
-        fuck += bitsPerLev[i];
+        shiftArray.push_back(SYSTEMSIZE - bitsPerLev[i] - shift);
+        shift += bitsPerLev[i];
     }
 }
 

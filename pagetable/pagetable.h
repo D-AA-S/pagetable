@@ -14,15 +14,16 @@ class LEVEL
 private:
     int DepthOfLevel;   // Which level is this?
     PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
-    std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
-    std::vector<MAP>* MapPtr;
+    
     std::vector<LEVEL*> nextLevel;
     std::vector<MAP> maps;
 
 public:
     LEVEL();
     LEVEL(int depth, PAGETABLE* PageTable, int entryCount);
-    void PageInsert(PAGETABLE* pageTable, unsigned int LogicalAddress, unsigned int Frame);
+    void PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame);
+    std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
+    std::vector<MAP>* MapPtr;
 };
 
 class PAGETABLE
@@ -39,7 +40,7 @@ protected:
 public:
     int levelCount; //number of levels in the system
     PAGETABLE(int levCount, std::vector<unsigned int> numOfBits);
-    //MAP* PageLookup(unsigned int LogicalAddress);
+    MAP* PageLookup(unsigned int LogicalAddress);
     void PageInsert(unsigned int LogicalAddress, unsigned int Frame);
     unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift);
     void LevelMaskCalc(std::vector<unsigned int> bitsPerLev);
