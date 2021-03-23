@@ -1,9 +1,14 @@
 #pragma once
 
+unsigned int frame = 0;
+
 class MAP
 {
+public:
     int index;
     bool validFrame;
+
+    MAP(int index, bool validFrame);
 };
 
 class PAGETABLE;
@@ -12,16 +17,13 @@ class LEVEL;
 class LEVEL
 {
 private:
-    int DepthOfLevel;   // Which level is this?
-    PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
     
-    std::vector<LEVEL*> nextLevel;
-    std::vector<MAP> maps;
 
 public:
     LEVEL();
-    LEVEL(int depth, PAGETABLE* PageTable, int entryCount);
-    void PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame);
+    LEVEL(int depth, PAGETABLE* PageTable);
+    int DepthOfLevel;   // Which level is this?
+    PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
     std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
     std::vector<MAP>* MapPtr;
 };
@@ -42,10 +44,10 @@ public:
     PAGETABLE(int levCount, std::vector<unsigned int> numOfBits);
     MAP* PageLookup(unsigned int LogicalAddress);
     void PageInsert(unsigned int LogicalAddress, unsigned int Frame);
+    void PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame);
     unsigned int LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift);
     void LevelMaskCalc(std::vector<unsigned int> bitsPerLev);
     void ShiftAryCalc(std::vector<unsigned int> bitsPerLev);
     std::vector<unsigned int> GetBitMask();
     std::vector<unsigned int> bitMaskArray; //bit masks per level
 };
-
