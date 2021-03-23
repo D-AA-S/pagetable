@@ -1,5 +1,7 @@
 #pragma once
 
+static int SYSTEMSIZE = 32;
+
 class MAP
 {
     int index;
@@ -46,6 +48,7 @@ public:
     void LevelMaskCalc(std::vector<unsigned int> bitsPerLev);
     void ShiftAryCalc(std::vector<unsigned int> bitsPerLev);
     std::vector<unsigned int> GetBitMask();
+    uint32_t GetMaskTot();
     std::vector<unsigned int> bitMaskArray; //bit masks per level
 };
 

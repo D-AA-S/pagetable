@@ -5,7 +5,7 @@
 #include "pagetable.h"
 #include <bitset>
 
-static int SYSTEMSIZE = 32;
+
 
 LEVEL::LEVEL()
 {
@@ -102,6 +102,16 @@ void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
         shiftArray.push_back(SYSTEMSIZE - bitsPerLev[i] - shift);
         shift += bitsPerLev[i];
     }
+}
+
+uint32_t PAGETABLE::GetMaskTot() 
+{
+    uint32_t maskTot = 0;
+    for (int i = 0; i < bitMaskArray.size(); i++) 
+    {
+        maskTot += bitMaskArray.at(i);
+    }
+    return maskTot;
 }
 
 std::vector<unsigned int> PAGETABLE::GetBitMask() 

@@ -19,13 +19,21 @@ void optionals(OutputOptionsType *input, std::string cmdLineArg)
     input->summary = false, input->bitmasks = false, input->logical2physical = false, 
         input->offset = false, input->page2frame = false;
     if (cmdLineArg == ("bitmasks"))
-    {input->bitmasks = true;}
-    else if (cmdLineArg.compare("logical2physical")) 
-    {input->logical2physical = true;}
-    else if (cmdLineArg.compare("page2frame"))
-    {input->page2frame = true;}
-    else if (cmdLineArg.compare("offset"))
-    {input->offset = true;}
+    {
+        input->bitmasks = true;
+    }
+    else if (cmdLineArg == ("logical2physical"))
+    {
+        input->logical2physical = true;
+    }
+    else if (cmdLineArg == ("page2frame"))
+    {
+        input->page2frame = true;
+    }
+    else if (cmdLineArg == ("offset"))
+    {
+        input->offset = true;
+    }
     else 
     {
         std::cout << "-o argument inputted invalid, please enter valid input" << std::endl; 
@@ -43,6 +51,7 @@ int main(int argc, char** argv)
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, argVal = 0, levelNum = 0;//Captures command line argument values
+    uint32_t maskTot; //Only use for outputting logical addresses and their offsets
 
     if (argc < 3)
     {
@@ -68,6 +77,11 @@ int main(int argc, char** argv)
 
     for (int i = optind+1; i < argc; i++)
     {
+        if (atoi(argv[i]) >= SYSTEMSIZE) 
+        {
+            std::cout << "The amount of bits allocated is greater than the alloted maximum" << std::endl;
+            exit(EXIT_FAILURE);
+        }
         levels.push_back(atoi(argv[i]));
         levelNum++;
     }
@@ -79,12 +93,16 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
+    maskTot = test.GetMaskTot();
     if (memRefLim > 0)
     {
         for (int i = 0; i < memRefLim; i++)
         {
             NextAddress(inputFile, &traceItem);
-            std::cout << "Address: " << std::hex << traceItem.addr << std::endl;
+            if (arguments.offset) 
+            {
+                report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
+            }
         }
     }
     else
@@ -92,11 +110,14 @@ int main(int argc, char** argv)
         while (!complete)
         {
             memRefLim++;
-            int weThereYet = NextAddress(inputFile, &traceItem);
-            complete = (weThereYet == 0);
+            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track of how many addresses have been scanned
+            complete = (scanningProg == 0);
             if (!complete)
             {
-                std::cout << "Address: " << traceItem.addr << std::endl;
+                if (arguments.offset)
+                {
+                    report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
+                }
             }
         }
     }
