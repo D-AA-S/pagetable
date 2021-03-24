@@ -160,8 +160,13 @@ std::vector<unsigned int> PAGETABLE::GetNumberOfBits()
     return numberOfBits;
 }
 
-uint32_t PAGETABLE::framePlusOffSet(uint32_t address, uint32_t *frame, uint32_t *mask)
+uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t *frame, uint32_t *mask)
 {
     address = address & ~*mask;
     address += (*frame << SYSTEMSIZE - *mask);
+}
+
+unsigned int PAGETABLE::ByteCalc()
+{
+
 }
