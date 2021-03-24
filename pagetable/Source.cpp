@@ -47,10 +47,13 @@ int main(int argc, char** argv)
 {
     OutputOptionsType arguments; //Structure that keeps track of optional arguments
     FILE* inputFile; //Stores the file argument from the command line
+    uint32_t* convert;
+    MAP* frameDat;
+    unsigned int frame;
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
-    int memRefLim = 0, argVal = 0, levelNum = 0;//Captures command line argument values
+    int memRefLim = 0, memRefAmt = 0, argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot; //Only use for outputting logical addresses and their offsets
 
     if (argc < 3)
@@ -64,6 +67,7 @@ int main(int argc, char** argv)
         {
         case 'n':
             memRefLim = atoi(optarg);
+            memRefAmt = memRefLim;
             break;
         case 'o':
             optionals(&arguments,optarg);
@@ -93,15 +97,80 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    maskTot = test.GetMaskTot();
-    if (memRefLim > 0)
+    if (arguments.page2frame) 
+    {
+        uint32_t* convert; //uin32_t array that stores the bits per bits per level vector to be used in report_pagemap
+        convert = new uint32_t[test.GetNumberOfBits().size()];
+        for (int i = 0; i < test.GetNumberOfBits().size(); i++)
+            convert[i] = (uint32_t)test.GetNumberOfBits().at(i);
+    }
+
+    if (arguments.bitmasks, arguments.logical2physical) 
+    {
+        maskTot = test.GetMaskTot();
+    }
+
+
+
+    while (!complete)
+    {
+        int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
+        frameDat = test.PageLookup(traceItem.addr);
+        if (frameDat == NULL)
+        {
+            frame = //Global Frame var
+            test.PageInsert(traceItem.addr, //global Frame var);
+        }
+        else
+        {
+            frame = frameDat->index;
+        }
+        if (memRefLim > 0) 
+        {
+            memRefAmt--;
+            complete = (memRefAmt == 0);
+        }
+        else
+            complete = (scanningProg == 0);
+        if (!complete)
+        {
+            if (arguments.offset)
+            {
+                report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
+            }
+            else if (arguments.logical2physical)
+            {
+                report_logical2physical(traceItem.addr, test.framePlusOffSet(traceItem.addr, &frame, &maskTot));
+            }
+            else if (arguments.page2frame)
+            {
+                report_pagemap(traceItem.addr, test.levelCount, convert, frame);
+            }
+        }
+    }
+
+    /*if (memRefLim > 0)
     {
         for (int i = 0; i < memRefLim; i++)
         {
+            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
+            if (traceItem.addr == NULL)
+            {
+                test.PageInsert(traceItem.addr, frame);
+                frame++;
+            }
             NextAddress(inputFile, &traceItem);
             if (arguments.offset) 
             {
                 report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
+            }
+            else if (arguments.logical2physical) 
+            {
+                report_logical2physical(traceItem.addr,);
+            }
+            else if (arguments.page2frame)
+            {
+                report_pagemap(traceItem.addr, test.levelCount, convert, frame);
             }
         }
     }
@@ -110,7 +179,12 @@ int main(int argc, char** argv)
         while (!complete)
         {
             memRefLim++;
-            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track of how many addresses have been scanned
+            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
+            if (traceItem.addr == NULL) 
+            {
+                test.PageInsert(traceItem.addr, frame);
+                frame++;
+            }
             complete = (scanningProg == 0);
             if (!complete)
             {
@@ -118,31 +192,34 @@ int main(int argc, char** argv)
                 {
                     report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
                 }
+                else if (arguments.logical2physical)
+                {
+                    report_logical2physical(traceItem.addr, );
+                }
+                else if (arguments.page2frame)
+                {
+                    report_pagemap(traceItem.addr, test.levelCount, convert, frame);
+                }
             }
         }
-    }
+    }*/
 
     if (arguments.bitmasks) {
-        uint32_t* convert;        //uin32_t array that stores bitmask vector data to be used in report_bitmasks function
         convert = new uint32_t[test.GetBitMask().size()];
         for (int i = 0; i < test.GetBitMask().size(); i++)
-        {
             convert[i] = (uint32_t)test.GetBitMask().at(i);
-        }
         report_bitmasks(test.levelCount, convert);
     }
-    /*case 'L':
-        //code for Logical2physical option
-        break;
-    case 'P':
-        //code for page2frame option
-        break;
-    case 'O':
-        //code for offest option
-        break;
-    default:
-        //code for summary when nothing is selected
-        break;
-    }*/
+    else if (arguments.summary) 
+    {
+        unsigned int store;
+        while (levels.empty()) 
+        {
+            store = levels.back();
+            levels.pop_back();
+        }
+        unsigned int pagesize = 2^(SYSTEMSIZE - store);
+        //report_summary(pagesize, /*hits variable*/, memRefLim,frame,);
+    }
     exit(EXIT_SUCCESS);
 }

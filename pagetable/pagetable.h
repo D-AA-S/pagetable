@@ -53,4 +53,6 @@ public:
     std::vector<unsigned int> GetBitMask();
     uint32_t GetMaskTot();
     std::vector<unsigned int> bitMaskArray; //bit masks per level
+    std::vector<unsigned int> GetNumberOfBits();
+    uint32_t framePlusOffSet(uint32_t address, uint32_t *frame, uint32_t *mask);
 };
