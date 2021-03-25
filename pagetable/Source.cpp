@@ -50,6 +50,7 @@ int main(int argc, char** argv)
     uint32_t* convert;
     int hits = 0;
     unsigned int localFrame;
+    unsigned int physMap;
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
@@ -87,6 +88,7 @@ int main(int argc, char** argv)
             exit(EXIT_FAILURE);
         }
         levels.push_back(atoi(argv[i]));
+        physMap = arguments.logical2physical ? +atoi(argv[i])+physMap : 0;
         levelNum++;
     }
     PAGETABLE test(levelNum, levels);
@@ -139,7 +141,7 @@ int main(int argc, char** argv)
             }
             else if (arguments.logical2physical)
             {
-                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, &maskTot));
+                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, maskTot ,physMap));
             }
             else if (arguments.page2frame)
             {

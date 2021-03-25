@@ -157,7 +157,7 @@ void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
 uint32_t PAGETABLE::GetMaskTot()
 {
     uint32_t maskTot = 0;
-    for (int i = 0; i < bitMaskArray.size(); i++)
+    for (int i = 0; i < numberOfBits.size(); i++)
     {
         maskTot += bitMaskArray.at(i);
     }
@@ -174,16 +174,14 @@ std::vector<unsigned int> PAGETABLE::GetNumberOfBits()
     return numberOfBits;
 }
 
-uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t *mask)
+uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t mask, unsigned int physmap)
 {
-    address = address & ~*mask;
-    uint32_t calcvar= SYSTEMSIZE - *mask;
-    frame << calcvar;
-    address += frame;
+    address = address & ~mask;
+    frame<<=(SYSTEMSIZE-physmap);
+    address = frame +address;
     return address; 
 }
 
 unsigned int PAGETABLE::ByteCalc()
 {
-
 }
