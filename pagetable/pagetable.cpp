@@ -10,7 +10,8 @@ unsigned int frame = 0;
 
 MAP::MAP()
 {
-
+    index = -1;
+    validFrame = false;
 }
 
 MAP::MAP(int index, bool validFrame)
@@ -38,24 +39,25 @@ void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // U
 void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame)
 {
     unsigned int currentDepth = levelPtr->DepthOfLevel;
-    unsigned int bitMask = levelPtr->PageTablePtr->bitMaskArray[currentDepth];  //Get the bitmask for the current level
-    unsigned int entryCount = levelPtr->PageTablePtr->entryCount[currentDepth];
-    unsigned int shift = levelPtr->PageTablePtr->shiftArray[currentDepth];
+    unsigned int bitMask = bitMaskArray[currentDepth];  //Get the bitmask for the current level
+    unsigned int entryCount = this->entryCount[currentDepth];
+    unsigned int shift = shiftArray[currentDepth];
     std::vector<MAP>* mapping = new std::vector<MAP>;
     std::vector<LEVEL*>* levels = new std::vector<LEVEL*>;
+    unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
 
-    if (currentDepth == levelPtr->PageTablePtr->levelCount - 1)   // If the current depth is equal to the levelCount - 1, then we are at a leaf node
+    if (currentDepth == levelCount - 1)   // If the current depth is equal to the levelCount - 1, then we are at a leaf node
     {
         if (levelPtr->MapPtr == 0)   //There are no maps for this address yet; create a new map array
         {
             mapping->resize(entryCount);
             levelPtr->MapPtr = mapping;
         }
-        unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
         if (levelPtr->MapPtr->at(pageIndex).validFrame == true)    // there already exists a mapping here. Do not need to replace
             return;
         MAP* newMap = new MAP(Frame, true);
         levelPtr->MapPtr->at(pageIndex) = *newMap;
+        frame++;
     }
     else
     {
@@ -64,9 +66,6 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
             levels->resize(entryCount);
             levelPtr->NextLevelPtr = levels;
         }
-        //LEVEL nextLevel(currentDepth + 1, *this);
-        unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
-        //levelPtr->NextLevelPtr->at(pageIndex) = &nextLevel;
         if (levelPtr->NextLevelPtr->at(pageIndex) == 0)
             levelPtr->NextLevelPtr->at(pageIndex) = new LEVEL(currentDepth + 1, *this);
         LEVEL* newLevel = levelPtr->NextLevelPtr->at(pageIndex);
@@ -91,15 +90,34 @@ PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
 
 MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this function - not done yet
 {
-    MAP testermap(3, true);
-    MAP* map = &testermap;
-    LEVEL* current = RootNodePtr;   // Need to finish writing this for loop to look up the pages
+    MAP* map = new MAP();
+    unsigned int currentDepth;
+    LEVEL* current = RootNodePtr;
+
     for (int i = 0; i < levelCount; i++)
     {
+        currentDepth = current->DepthOfLevel;
         unsigned int page = LogicalToPage(LogicalAddress, bitMaskArray[i], shiftArray[i]);
-        current->NextLevelPtr->at(page);
+        if (currentDepth == levelCount - 1) // We are at the maps. Check to see if the map exisits. If it doesn't, return null. If it does, return the map!
+        {
+            if (current->MapPtr == NULL)
+                return NULL;
+            else if (current->MapPtr->at(page).validFrame == false)
+                return NULL;
+            else
+            {
+                map = &(current->MapPtr->at(page));
+                return map;
+            }
+        }
+        else
+        {
+            if (current->NextLevelPtr == NULL)
+                return NULL;
+            else
+                current = current->NextLevelPtr->at(page);
+        }
     }
-    return map;
 }
 
 unsigned int PAGETABLE::LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
@@ -119,9 +137,7 @@ void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
             tempBitMask <<= 1;
             tempBitMask |= 0b1;
         }
-        //std::cout << std::bitset<32>(tempBitMask) << std::endl;     //Just testing to make sure the bitmask is set properly
         tempBitMask <<= SYSTEMSIZE - bitsPerLev[i] - shift;
-        //std::cout << std::bitset<32>(tempBitMask) << std::endl;
         shift += bitsPerLev[i];
         bitMaskArray.push_back(tempBitMask);
         tempBitMask = 0;
@@ -151,15 +167,4 @@ uint32_t PAGETABLE::GetMaskTot()
 std::vector<unsigned int> PAGETABLE::GetBitMask()
 {
     return bitMaskArray;
-}
-
-std::vector<unsigned int> PAGETABLE::GetNumberOfBits()
-{
-    return numberOfBits;
-}
-
-uint32_t PAGETABLE::framePlusOffSet(uint32_t address, uint32_t *frame, uint32_t *mask)
-{
-    address = address & ~*mask;
-    address += (*frame << SYSTEMSIZE - *mask);
 }
