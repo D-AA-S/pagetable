@@ -56,6 +56,7 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
             return;
         MAP* newMap = new MAP(Frame, true);
         levelPtr->MapPtr->at(pageIndex) = *newMap;
+        frame++;
     }
     else
     {
@@ -162,6 +163,7 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t *frame, uint32_t 
 {
     address = address & ~*mask;
     address += (*frame << SYSTEMSIZE - *mask);
+    return address; 
 }
 
 unsigned int PAGETABLE::ByteCalc()

@@ -48,8 +48,8 @@ int main(int argc, char** argv)
     OutputOptionsType arguments; //Structure that keeps track of optional arguments
     FILE* inputFile; //Stores the file argument from the command line
     uint32_t* convert;
-    MAP* frameDat;
-    unsigned int frame;
+    int hits = 0;
+    unsigned int localFrame;
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
@@ -115,15 +115,15 @@ int main(int argc, char** argv)
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-        frameDat = test.PageLookup(traceItem.addr);
-        if (frameDat == NULL)
+        if (!test.PageLookup(traceItem.addr)->index)
         {
-            frame = //Global Frame var
-            test.PageInsert(traceItem.addr, //global Frame var);
+            localFrame = frame;
+            test.PageInsert(traceItem.addr, frame);
         }
         else
         {
-            frame = frameDat->index;
+            localFrame = test.PageLookup(traceItem.addr)->index;
+            hits++;
         }
         if (memRefLim > 0) 
         {
@@ -140,11 +140,11 @@ int main(int argc, char** argv)
             }
             else if (arguments.logical2physical)
             {
-                report_logical2physical(traceItem.addr, test.framePlusOffSet(traceItem.addr, &frame, &maskTot));
+                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, &localFrame, &maskTot));
             }
             else if (arguments.page2frame)
             {
-                report_pagemap(traceItem.addr, test.levelCount, convert, frame);
+                report_pagemap(traceItem.addr, test.levelCount, convert, localFrame);
             }
         }
     }
