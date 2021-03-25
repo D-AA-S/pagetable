@@ -111,7 +111,6 @@ int main(int argc, char** argv)
     }
 
 
-
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
@@ -140,7 +139,7 @@ int main(int argc, char** argv)
             }
             else if (arguments.logical2physical)
             {
-                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, &localFrame, &maskTot));
+                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, &maskTot));
             }
             else if (arguments.page2frame)
             {
