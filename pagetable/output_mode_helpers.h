@@ -19,6 +19,7 @@
 #ifdef __cplusplus
 /* C++ includes */
 #include <stdint.h>
+extern "C"
 #else
 /* C includes */
 #include <inttypes.h>

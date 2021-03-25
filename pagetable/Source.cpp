@@ -5,8 +5,7 @@
 #include <algorithm>
 #include <unistd.h>
 #include "pagetable.h"
-extern "C"
-{
+extern "C" {
 #include "byutr.h"
 }
 #include "output_mode_helpers.h"
@@ -55,7 +54,7 @@ int main(int argc, char** argv)
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, memRefAmt = 0, argVal = 0, levelNum = 0;//Captures command line argument values
-    uint32_t maskTot; //Only use for outputting logical addresses and their offsets
+    uint32_t maskTot = 0; //Only use for outputting logical addresses and their offsets
     arguments.summary = true, arguments.bitmasks = false, arguments.logical2physical = false,
         arguments.offset = false, arguments.page2frame = false;
 
@@ -113,7 +112,6 @@ int main(int argc, char** argv)
     //converts bits per level vector to uint32 array for page2frame outputing
     if (arguments.page2frame)
     {
-        uint32_t* convert; //uin32_t array that stores the bits per bits per level vector to be used in report_pagemap
         convert = new uint32_t[test.GetNumberOfBits().size()];
         for (int i = 0; i < test.GetNumberOfBits().size(); i++) {
             convert[i] = (uint32_t)test.GetNumberOfBits().at(i);
@@ -183,7 +181,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = 2^(SYSTEMSIZE - store);
-        //report_summary(pagesize, /*hits variable*/, memRefLim,frame,);
+        //report_summary(pagesize, hits, memRefLim,frame,);
     }
 
     exit(EXIT_SUCCESS);
