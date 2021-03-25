@@ -47,20 +47,25 @@ int main(int argc, char** argv)
 {
     OutputOptionsType arguments; //Structure that keeps track of optional arguments
     FILE* inputFile; //Stores the file argument from the command line
-    uint32_t* convert;
-    int hits = 0;
-    unsigned int localFrame;
+    uint32_t* convert; //Dynamic array for converting integer vectors into uint32 integer arrays
+    int hits = 0; //number of successful lookup functions
+    unsigned int localFrame; //local frame variable for outputting options
+    unsigned int physMap; //total amount of bits distributed for levels
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, memRefAmt = 0, argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot; //Only use for outputting logical addresses and their offsets
+    arguments.summary = true, arguments.bitmasks = false, arguments.logical2physical = false,
+        arguments.offset = false, arguments.page2frame = false;
 
+    //Checks for correct amount of command line arguments
     if (argc < 3)
     {
         std::cout << "Please enter a file & amount of bits for single/multiple levels" << std::endl;
         exit(EXIT_FAILURE);
     }
+    //detects and processes optional arguments
     while ((argVal = getopt(argc, argv, "n:o:")) != -1)
     {
         switch (argVal)
@@ -70,7 +75,7 @@ int main(int argc, char** argv)
             memRefAmt = memRefLim;
             break;
         case 'o':
-            optionals(&arguments,optarg);
+            optionals(&arguments, optarg);
             break;
         default:
             std::cout << "Invalid optional argument" << std::endl;
@@ -78,39 +83,51 @@ int main(int argc, char** argv)
             break;
         }
     }
-
-    for (int i = optind+1; i < argc; i++)
+    //checks for atleast 1 level of bits after the file argument
+    if (optind+1 == argc) 
     {
-        if (atoi(argv[i]) >= SYSTEMSIZE) 
+        std::cout << "No argument have been imputted for the bits per level/levels" << std::endl; 
+        exit(EXIT_FAILURE);
+    }
+    for (int i = optind + 1; i < argc; i++)
+    {
+        levels.push_back(atoi(argv[i]));
+        physMap += atoi(argv[i]);
+        if (atoi(argv[i]) >= SYSTEMSIZE || physMap >= SYSTEMSIZE)
         {
             std::cout << "The amount of bits allocated is greater than the alloted maximum" << std::endl;
             exit(EXIT_FAILURE);
         }
-        levels.push_back(atoi(argv[i]));
         levelNum++;
     }
+
     PAGETABLE test(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
+
+    //checks for proper file input
     if (inputFile == NULL)
     {
         std::cout << "File either does not exsist or is unopenable" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    if (arguments.page2frame) 
+    //converts bits per level vector to uint32 array for page2frame outputing
+    if (arguments.page2frame)
     {
         uint32_t* convert; //uin32_t array that stores the bits per bits per level vector to be used in report_pagemap
         convert = new uint32_t[test.GetNumberOfBits().size()];
-        for (int i = 0; i < test.GetNumberOfBits().size(); i++)
+        for (int i = 0; i < test.GetNumberOfBits().size(); i++) {
             convert[i] = (uint32_t)test.GetNumberOfBits().at(i);
+        }
     }
 
-    if (arguments.bitmasks, arguments.logical2physical) 
+    //Sums the content of the mask array for bitwise for the specified output types
+    if (arguments.logical2physical || arguments.offset)
     {
         maskTot = test.GetMaskTot();
     }
-
-
+    
+    //iterates through the input file for specified amount of addresses or until reached the end of the file
+    //Outputs during the loop if optional arguments were received
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
@@ -124,6 +141,7 @@ int main(int argc, char** argv)
             localFrame = test.PageLookup(traceItem.addr)->index;
             hits++;
         }
+
         if (memRefLim > 0) 
         {
             memRefAmt--;
@@ -139,7 +157,7 @@ int main(int argc, char** argv)
             }
             else if (arguments.logical2physical)
             {
-                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, &maskTot));
+                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, maskTot ,physMap));
             }
             else if (arguments.page2frame)
             {
@@ -148,12 +166,14 @@ int main(int argc, char** argv)
         }
     }
 
+    //bitmask output when bitmask optional argument is received
     if (arguments.bitmasks) {
         convert = new uint32_t[test.GetBitMask().size()];
         for (int i = 0; i < test.GetBitMask().size(); i++)
             convert[i] = (uint32_t)test.GetBitMask().at(i);
         report_bitmasks(test.levelCount, convert);
     }
+    //Default output option if no -o optional argument were received
     else if (arguments.summary) 
     {
         unsigned int store;
@@ -165,5 +185,6 @@ int main(int argc, char** argv)
         unsigned int pagesize = 2^(SYSTEMSIZE - store);
         //report_summary(pagesize, /*hits variable*/, memRefLim,frame,);
     }
+
     exit(EXIT_SUCCESS);
 }
