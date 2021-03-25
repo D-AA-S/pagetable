@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <algorithm>
+#include <math.h>
 #include <unistd.h>
 #include "pagetable.h"
 extern "C" {
@@ -159,6 +160,7 @@ int main(int argc, char** argv)
                 convert = new uint32_t[levels.size()];
                 for (int i = 0; i < levelNum; i++) {
                     convert[i] = (uint32_t)(traceItem.addr & (uint32_t)test.GetBitMask()[i]);
+                    convert[i] >>= (uint32_t)test.GetShiftArray()[i];
                 }
                 report_pagemap(traceItem.addr, test.levelCount, convert, localFrame);
             }

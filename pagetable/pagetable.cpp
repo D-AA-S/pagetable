@@ -156,6 +156,11 @@ std::vector<unsigned int> PAGETABLE::GetBitMask()
     return bitMaskArray;
 }
 
+std::vector<unsigned int> PAGETABLE::GetShiftArray() 
+{
+    return shiftArray;
+}
+
 std::vector<unsigned int> PAGETABLE::GetNumberOfBits()
 {
     return numberOfBits;
