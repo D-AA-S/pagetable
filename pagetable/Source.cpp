@@ -153,8 +153,8 @@ int main(int argc, char** argv)
             }
             else if (arguments.page2frame)
             {
-                convert = new uint32_t[test.levelCount];
-                for (int i = 0; i < test.levelCount; i++) {
+                convert = new uint32_t[test->levelCount];
+                for (int i = 0; i < test->levelCount; i++) {
                     convert[i] = (uint32_t)(address & (uint32_t)test->GetBitMask()[i]);
                     convert[i] >>= (uint32_t)test->GetShiftArray()[i];
                 }
