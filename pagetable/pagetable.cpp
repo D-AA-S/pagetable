@@ -20,11 +20,6 @@ MAP::MAP(int index, bool validFrame)
     this->validFrame = validFrame;
 }
 
-LEVEL::LEVEL()
-{
-
-};
-
 LEVEL::LEVEL(int depth, PAGETABLE& PageTable)
 {
     DepthOfLevel = depth;
@@ -42,17 +37,13 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
     unsigned int bitMask = bitMaskArray[currentDepth];  //Get the bitmask for the current level
     unsigned int entryCount = this->entryCount[currentDepth];
     unsigned int shift = shiftArray[currentDepth];
-    std::vector<MAP>* mapping = new std::vector<MAP>;
     std::vector<LEVEL*>* levels = new std::vector<LEVEL*>;
     unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
 
     if (currentDepth == levelCount - 1)   // If the current depth is equal to the levelCount - 1, then we are at a leaf node
     {
         if (levelPtr->MapPtr == 0)   //There are no maps for this address yet; create a new map array
-        {
-            mapping->resize(entryCount);
-            levelPtr->MapPtr = mapping;
-        }
+            levelPtr->MapPtr = new std::vector<MAP>(entryCount);
         if (levelPtr->MapPtr->at(pageIndex).validFrame == true)    // there already exists a mapping here. Do not need to replace
             return;
         MAP* newMap = new MAP(Frame, true);
@@ -62,10 +53,7 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
     else
     {
         if (levelPtr->NextLevelPtr == 0)
-        {
-            levels->resize(entryCount);
-            levelPtr->NextLevelPtr = levels;
-        }
+            levelPtr->NextLevelPtr = new std::vector<LEVEL*>(entryCount);
         if (levelPtr->NextLevelPtr->at(pageIndex) == 0)
             levelPtr->NextLevelPtr->at(pageIndex) = new LEVEL(currentDepth + 1, *this);
         LEVEL* newLevel = levelPtr->NextLevelPtr->at(pageIndex);
@@ -84,7 +72,6 @@ PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
         entryCount.push_back(pow(2, numberOfBits[i]));
 
     // Setup Level 0
-
     RootNodePtr = new LEVEL(0, *this); // Assign the address of the newly created LEVEL to the RootNodePtr. This points to Level 0
 };
 

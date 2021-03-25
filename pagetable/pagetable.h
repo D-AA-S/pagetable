@@ -17,9 +17,8 @@ class LEVEL;
 class LEVEL
 {
 public:
-    LEVEL();
     LEVEL(int depth, PAGETABLE& PageTable);
-    int DepthOfLevel;   // Which level is this?
+    int DepthOfLevel; // Which level is this?
     PAGETABLE* PageTablePtr;   // Point to the PageTable that contains the root level node
     std::vector<LEVEL*>* NextLevelPtr;   // Array of pages in this level, each element points to a level node in the next level
     std::vector<MAP>* MapPtr;
