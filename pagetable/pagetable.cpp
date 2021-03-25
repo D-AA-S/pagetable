@@ -37,7 +37,6 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
     unsigned int bitMask = bitMaskArray[currentDepth];  //Get the bitmask for the current level
     unsigned int entryCount = this->entryCount[currentDepth];
     unsigned int shift = shiftArray[currentDepth];
-    std::vector<LEVEL*>* levels = new std::vector<LEVEL*>;
     unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
 
     if (currentDepth == levelCount - 1)   // If the current depth is equal to the levelCount - 1, then we are at a leaf node
@@ -146,22 +145,22 @@ uint32_t PAGETABLE::GetMaskTot()
     uint32_t maskTot = 0;
     for (int i = 0; i < bitMaskArray.size(); i++)
     {
-        maskTot += bitMaskArray[i];
+        maskTot |= bitMaskArray[i];
     }
     return maskTot;
 }
 
-std::vector<unsigned int> PAGETABLE::GetBitMask()
+std::vector<unsigned int> &PAGETABLE::GetBitMask()
 {
     return bitMaskArray;
 }
 
-std::vector<unsigned int> PAGETABLE::GetShiftArray() 
+std::vector<unsigned int> &PAGETABLE::GetShiftArray() 
 {
     return shiftArray;
 }
 
-std::vector<unsigned int> PAGETABLE::GetNumberOfBits()
+std::vector<unsigned int> &PAGETABLE::GetNumberOfBits()
 {
     return numberOfBits;
 }
@@ -178,4 +177,5 @@ unsigned int PAGETABLE::ByteCalc()
 {
     unsigned int byteTot = 0;
     byteTot += sizeof(levelCount);
+    return byteTot;
 }
