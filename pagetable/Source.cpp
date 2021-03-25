@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <math.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include "pagetable.h"
 extern "C" {
 #include "byutr.h"
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
         levelNum++;
     }
 
-    PAGETABLE test(levelNum, levels);
+    PAGETABLE* test = new PAGETABLE(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
 
     //checks for proper file input
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
     //Sums the content of the mask array for bitwise for the specified output types
     if (arguments.logical2physical || arguments.offset)
     {
-        maskTot = test.GetMaskTot();
+        maskTot = test->GetMaskTot();
     }
     
     //iterates through the input file for specified amount of addresses or until reached the end of the file
@@ -127,14 +127,14 @@ int main(int argc, char** argv)
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-        if (!test.PageLookup(traceItem.addr))
+        if (!test->PageLookup(traceItem.addr))
         {
             localFrame = frame;
-            test.PageInsert(traceItem.addr, frame);
+            test->PageInsert(traceItem.addr, frame);
         }
         else
         {
-            localFrame = test.PageLookup(traceItem.addr)->index;
+            localFrame = test->PageLookup(traceItem.addr)->index;
             hits++;
         }
 
@@ -153,26 +153,26 @@ int main(int argc, char** argv)
             }
             else if (arguments.logical2physical)
             {
-                report_logical2physical(traceItem.addr, test.FramePlusOffSet(traceItem.addr, localFrame, maskTot ,physMap));
+                report_logical2physical(traceItem.addr, test->FramePlusOffSet(traceItem.addr, localFrame, maskTot ,physMap));
             }
             else if (arguments.page2frame)
             {
                 convert = new uint32_t[levels.size()];
                 for (int i = 0; i < levelNum; i++) {
-                    convert[i] = (uint32_t)(traceItem.addr & (uint32_t)test.GetBitMask()[i]);
-                    convert[i] >>= (uint32_t)test.GetShiftArray()[i];
+                    convert[i] = (uint32_t)(traceItem.addr & (uint32_t)test->GetBitMask()[i]);
+                    convert[i] >>= (uint32_t)test->GetShiftArray()[i];
                 }
-                report_pagemap(traceItem.addr, test.levelCount, convert, localFrame);
+                report_pagemap(traceItem.addr, test->levelCount, convert, localFrame);
             }
         }
     }
 
     //bitmask output when bitmask optional argument is received
     if (arguments.bitmasks) {
-        convert = new uint32_t[test.GetBitMask().size()];
-        for (int i = 0; i < test.GetBitMask().size(); i++)
-            convert[i] = (uint32_t)test.GetBitMask().at(i);
-        report_bitmasks(test.levelCount, convert);
+        convert = new uint32_t[test->levelCount];
+        for (int i = 0; i < test->levelCount; i++)
+            convert[i] = (uint32_t) test->GetBitMask().at(i);
+        report_bitmasks(test->levelCount, convert);
     }
     //Default output option if no -o optional argument were received
     else if (arguments.summary) 
