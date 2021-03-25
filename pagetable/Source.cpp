@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-        if (!test.PageLookup(traceItem.addr)->index)
+        if (!test.PageLookup(traceItem.addr))
         {
             localFrame = frame;
             test.PageInsert(traceItem.addr, frame);
@@ -148,61 +148,6 @@ int main(int argc, char** argv)
             }
         }
     }
-
-    /*if (memRefLim > 0)
-    {
-        for (int i = 0; i < memRefLim; i++)
-        {
-            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-            if (traceItem.addr == NULL)
-            {
-                test.PageInsert(traceItem.addr, frame);
-                frame++;
-            }
-            NextAddress(inputFile, &traceItem);
-            if (arguments.offset) 
-            {
-                report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
-            }
-            else if (arguments.logical2physical) 
-            {
-                report_logical2physical(traceItem.addr,);
-            }
-            else if (arguments.page2frame)
-            {
-                report_pagemap(traceItem.addr, test.levelCount, convert, frame);
-            }
-        }
-    }
-    else
-    {
-        while (!complete)
-        {
-            memRefLim++;
-            int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-            if (traceItem.addr == NULL) 
-            {
-                test.PageInsert(traceItem.addr, frame);
-                frame++;
-            }
-            complete = (scanningProg == 0);
-            if (!complete)
-            {
-                if (arguments.offset)
-                {
-                    report_logical2offset(traceItem.addr, (traceItem.addr & ~maskTot));
-                }
-                else if (arguments.logical2physical)
-                {
-                    report_logical2physical(traceItem.addr, );
-                }
-                else if (arguments.page2frame)
-                {
-                    report_pagemap(traceItem.addr, test.levelCount, convert, frame);
-                }
-            }
-        }
-    }*/
 
     if (arguments.bitmasks) {
         convert = new uint32_t[test.GetBitMask().size()];
