@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     uint32_t* convert; //Dynamic array for converting integer vectors into uint32 integer arrays
     int hits = 0; //number of successful lookup functions
     unsigned int localFrame; //local frame variable for outputting options
-    unsigned int physMap; //total amount of bits distributed for levels
+    int physMap = 0; //total amount of bits distributed for levels
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
     for (int i = optind + 1; i < argc; i++)
     {
         levels.push_back(atoi(argv[i]));
-        physMap += atoi(argv[i]);
+        physMap = atoi(argv[i]) + physMap;
         if (atoi(argv[i]) >= SYSTEMSIZE || physMap >= SYSTEMSIZE)
         {
             std::cout << "The amount of bits allocated is greater than the alloted maximum" << std::endl;
@@ -112,10 +112,7 @@ int main(int argc, char** argv)
     //converts bits per level vector to uint32 array for page2frame outputing
     if (arguments.page2frame)
     {
-        convert = new uint32_t[test.GetNumberOfBits().size()];
-        for (int i = 0; i < test.GetNumberOfBits().size(); i++) {
-            convert[i] = (uint32_t)test.GetNumberOfBits().at(i);
-        }
+        
     }
 
     //Sums the content of the mask array for bitwise for the specified output types
@@ -159,6 +156,10 @@ int main(int argc, char** argv)
             }
             else if (arguments.page2frame)
             {
+                convert = new uint32_t[levels.size()];
+                for (int i = 0; i < levelNum; i++) {
+                    convert[i] = (uint32_t)(traceItem.addr & (uint32_t)test.GetBitMask()[i]);
+                }
                 report_pagemap(traceItem.addr, test.levelCount, convert, localFrame);
             }
         }
@@ -177,11 +178,11 @@ int main(int argc, char** argv)
         unsigned int store;
         while (levels.empty()) 
         {
-            store = levels.back();
+            store += levels.back();
             levels.pop_back();
         }
-        unsigned int pagesize = 2^(SYSTEMSIZE - store);
-        //report_summary(pagesize, hits, memRefLim,frame,);
+        unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
+        report_summary(pagesize, hits, memRefLim,frame, 32);
     }
 
     exit(EXIT_SUCCESS);
