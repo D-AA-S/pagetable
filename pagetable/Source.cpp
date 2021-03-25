@@ -70,6 +70,10 @@ int main(int argc, char** argv)
         switch (argVal)
         {
         case 'n':
+            if (atoi(optarg) <= 0) {
+                std::cout << "Addresses to scan must be greater than 0" << std::endl;
+                exit(EXIT_FAILURE);
+            }
             memRefLim = atoi(optarg);
             memRefAmt = memRefLim;
             break;
@@ -133,12 +137,7 @@ int main(int argc, char** argv)
             hits++;
         }
 
-        if (memRefLim > 0) 
-        {
-            memRefAmt--;
-            complete = (memRefAmt == 0);
-        }
-        else
+        if(!memRefLim >= 0)
             complete = (scanningProg == 0);
         if (!complete)
         {
@@ -160,6 +159,11 @@ int main(int argc, char** argv)
                 }
                 report_pagemap(traceItem.addr, test.levelCount, convert, localFrame);
             }
+        }
+        if (memRefLim >= 0)
+        {
+            memRefAmt--;
+            complete = (memRefAmt == 0);
         }
     }
 
