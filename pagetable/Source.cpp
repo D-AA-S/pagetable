@@ -11,40 +11,14 @@ extern "C" {
 }
 #include "output_mode_helpers.h"
 
+
+
 /*Receives optional argument from main function, and converts cmdLineArg to lowercase only
 to accurately parse what optional argument is being inputted*/
-void optionals(OutputOptionsType *input, std::string cmdLineArg) 
-{
-    std::transform(cmdLineArg.begin(), cmdLineArg.end(), cmdLineArg.begin(), ::tolower);
-    input->summary = false;
-    if (cmdLineArg == ("bitmasks"))
-    {
-        input->bitmasks = true;
-    }
-    else if (cmdLineArg == ("logical2physical"))
-    {
-        input->logical2physical = true;
-    }
-    else if (cmdLineArg == ("page2frame"))
-    {
-        input->page2frame = true;
-    }
-    else if (cmdLineArg == ("offset"))
-    {
-        input->offset = true;
-    }
-    else 
-    {
-        std::cout << "-o argument inputted invalid, please enter valid input" << std::endl; 
-        exit(EXIT_FAILURE);
-    }
-}
-
 
 
 int main(int argc, char** argv)
 {
-    OutputOptionsType arguments; //Structure that keeps track of optional arguments
     FILE* inputFile; //Stores the file argument from the command line
     uint32_t* convert; //Dynamic array for converting integer vectors into uint32 integer arrays
     int hits = 0; //number of successful lookup functions
@@ -53,10 +27,9 @@ int main(int argc, char** argv)
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
-    int memRefLim = 0, memRefAmt = 0, argVal = 0, levelNum = 0;//Captures command line argument values
+    int memRefLim = 0, memRefAmt = 0, addressnum = 0,argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot = 0; //Only use for outputting logical addresses and their offsets
-    arguments.summary = true, arguments.bitmasks = false, arguments.logical2physical = false,
-        arguments.offset = false, arguments.page2frame = false;
+    int summary = true, bitmasks = false, logical2physical = true, offset = false, page2frame = true;
 
     //Checks for correct amount of command line arguments
     if (argc < 3)
@@ -76,9 +49,25 @@ int main(int argc, char** argv)
             }
             memRefLim = atoi(optarg);
             memRefAmt = memRefLim;
+            addressnum = memRefLim;
             break;
         case 'o':
-            optionals(&arguments, optarg);
+            summary = false;
+            if ((std::string)optarg == ("bitmasks"))
+                bitmasks = true;
+            else if ((std::string)optarg == ("logical2physical"))
+                logical2physical = true;
+            else if ((std::string)optarg == ("page2frame"))
+                page2frame = true;
+            else if ((std::string)optarg == ("offset"))
+                offset = true;
+            else if ((std::string)optarg == ("summary"))
+                summary = true;
+            else
+            {
+                std::cout << optarg << " is not a valid -o option, please enter valid input" << std::endl;
+                exit(EXIT_FAILURE);
+            }
             break;
         default:
             std::cout << "Invalid optional argument" << std::endl;
@@ -115,7 +104,7 @@ int main(int argc, char** argv)
     }
 
     //Sums the content of the mask array for bitwise for the specified output types
-    if (arguments.logical2physical || arguments.offset)
+    if (logical2physical || offset)
     {
         maskTot = test->GetMaskTot();
     }
@@ -137,20 +126,22 @@ int main(int argc, char** argv)
             hits++;
         }
 
-        if(!memRefLim >= 0)
+        if (!memRefLim > 0) {
             complete = (scanningProg == 0);
+            addressnum++;
+        }
         if (!complete)
         {
-            if (arguments.offset)
+            if (offset)
             {
                 uint32_t dest = (traceItem.addr & ~maskTot);
                 report_logical2offset(address, (address & ~maskTot));
             }
-            else if (arguments.logical2physical)
+            else if (logical2physical)
             {
                 report_logical2physical(address, test->FramePlusOffSet(address, localFrame, maskTot ,physMap));
             }
-            else if (arguments.page2frame)
+            else if (page2frame)
             {
                 convert = new uint32_t[test->levelCount];
                 for (int i = 0; i < test->levelCount; i++) {
@@ -160,7 +151,7 @@ int main(int argc, char** argv)
                 report_pagemap(traceItem.addr, test->levelCount, convert, localFrame);
             }
         }
-        if (memRefLim >= 0)
+        if (memRefLim > 0)
         {
             memRefAmt--;
             complete = (memRefAmt == 0);
@@ -168,14 +159,14 @@ int main(int argc, char** argv)
     }
 
     //bitmask output when bitmask optional argument is received
-    if (arguments.bitmasks) {
+    if (bitmasks) {
         convert = new uint32_t[test->levelCount];
         for (int i = 0; i < test->levelCount; i++)
             convert[i] = (uint32_t) test->GetBitMask().at(i);
         report_bitmasks(test->levelCount, convert);
     }
     //Default output option if no -o optional argument were received
-    else if (arguments.summary) 
+    else if (summary) 
     {
         unsigned int store;
         while (levels.empty()) 
@@ -184,7 +175,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
-        report_summary(pagesize, hits, memRefLim,frame, 32);
+        report_summary(pagesize, hits, addressnum ,frame, 32);
     }
 
     exit(EXIT_SUCCESS);
