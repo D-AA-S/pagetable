@@ -78,7 +78,7 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this fu
 {
     MAP* map = new MAP();
     unsigned int currentDepth;
-    LEVEL* current = this->RootNodePtr;
+    LEVEL* current = RootNodePtr;
 
     for (int i = 0; i < levelCount; i++)
     {
@@ -99,8 +99,6 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this fu
         else
         {
             if (current->NextLevelPtr == NULL)
-                return NULL;
-            else if (current->NextLevelPtr->at(page) == NULL)
                 return NULL;
             else
                 current = current->NextLevelPtr->at(page);
@@ -175,8 +173,12 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t m
     return address; 
 }
 
-unsigned int PAGETABLE::ByteCalc()
+unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize)
 {
     unsigned int byteTot = 0;
+    for (int i = 0; i < instance.levelCount; i++) 
+    {
+        byteTot = byteTot + (pow(2, (numberOfBits[i])))*4 + pagesize;
+    }
     return byteTot;
 }

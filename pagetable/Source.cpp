@@ -116,7 +116,8 @@ int main(int argc, char** argv)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
         uint32_t address = traceItem.addr;
-        if (!test->PageLookup((unsigned int)address))
+        localFrame = frame;
+        /*if (!test->PageLookup((unsigned int)address))
         {
             localFrame = frame;
             test->PageInsert(traceItem.addr, frame);
@@ -125,7 +126,7 @@ int main(int argc, char** argv)
         {
             localFrame = test->PageLookup(address)->index;
             hits++;
-        }
+        }*/
 
         if (!memRefLim > 0) {
             complete = (scanningProg == 0);
@@ -176,7 +177,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
-        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc());
+        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc(*test, pagesize));
     }
 
     exit(EXIT_SUCCESS);

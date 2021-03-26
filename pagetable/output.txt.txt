@@ -1,0 +1,13 @@
+summary for 4 4 8
+Page size: 65536 bytes
+Addresses processed: 224450
+Hits: 223478 (99.57%), Misses 972 (0.43%)
+Frames allocated: 972
+Bytes used:  0
+
+summary for 16
+Page size: 65536 bytes
+Addresses processed: 224450
+Hits: 223478 (99.57%), Misses 972 (0.43%)
+Frames allocated: 972
+Bytes used:  327680
