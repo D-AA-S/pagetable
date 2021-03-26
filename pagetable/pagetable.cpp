@@ -178,6 +178,5 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t m
 unsigned int PAGETABLE::ByteCalc()
 {
     unsigned int byteTot = 0;
-    byteTot += sizeof(levelCount);
     return byteTot;
 }
