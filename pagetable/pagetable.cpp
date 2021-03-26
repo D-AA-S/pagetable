@@ -78,7 +78,7 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this fu
 {
     MAP* map = new MAP();
     unsigned int currentDepth;
-    LEVEL* current = RootNodePtr;
+    LEVEL* current = this->RootNodePtr;
 
     for (int i = 0; i < levelCount; i++)
     {
@@ -99,6 +99,8 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this fu
         else
         {
             if (current->NextLevelPtr == NULL)
+                return NULL;
+            else if (current->NextLevelPtr->at(page) == NULL)
                 return NULL;
             else
                 current = current->NextLevelPtr->at(page);
