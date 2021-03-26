@@ -40,7 +40,7 @@ public:
     std::vector<unsigned int> numberOfBits; //number of bits per level
     std::vector<unsigned int> shiftArray; //bit shift per level
     std::vector<int> entryCount; // EntryCount[i]: # of possible pages for level i 2^8 for example
-    std::vector<unsigned int>&GetBitMask();
+    std::vector<unsigned int> &GetBitMask();
     uint32_t GetMaskTot();
     std::vector<unsigned int> bitMaskArray; //bit masks per level
     std::vector<unsigned int> &GetNumberOfBits();

@@ -34,14 +34,14 @@ void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // U
 void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame)
 {
     unsigned int currentDepth = levelPtr->DepthOfLevel;
-    unsigned int bitMask = bitMaskArray[currentDepth];  //Get the bitmask for the current level
-    unsigned int entryCount = this->entryCount[currentDepth];
-    unsigned int shift = shiftArray[currentDepth];
+    unsigned int bitMask = levelPtr->PageTablePtr->bitMaskArray[currentDepth];  //Get the bitmask for the current level
+    unsigned int entryCount = levelPtr->PageTablePtr->entryCount[currentDepth];
+    unsigned int shift = levelPtr->PageTablePtr->shiftArray[currentDepth];
     unsigned int pageIndex = LogicalToPage(LogicalAddress, bitMask, shift);
 
     if (currentDepth == levelCount - 1)   // If the current depth is equal to the levelCount - 1, then we are at a leaf node
     {
-        if (levelPtr->MapPtr == 0)   //There are no maps for this address yet; create a new map array
+        if (levelPtr->MapPtr == NULL)   //There are no maps for this address yet; create a new map array
             levelPtr->MapPtr = new std::vector<MAP>(entryCount);
         if (levelPtr->MapPtr->at(pageIndex).validFrame == true)    // there already exists a mapping here. Do not need to replace
             return;
@@ -51,9 +51,9 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
     }
     else
     {
-        if (levelPtr->NextLevelPtr == 0)
+        if (levelPtr->NextLevelPtr == NULL)
             levelPtr->NextLevelPtr = new std::vector<LEVEL*>(entryCount);
-        if (levelPtr->NextLevelPtr->at(pageIndex) == 0)
+        if (levelPtr->NextLevelPtr->at(pageIndex) == NULL)
             levelPtr->NextLevelPtr->at(pageIndex) = new LEVEL(currentDepth + 1, *this);
         LEVEL* newLevel = levelPtr->NextLevelPtr->at(pageIndex);
         PageInsert(newLevel, LogicalAddress, Frame);
