@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include <algorithm>
 #include <math.h>
 #include <unistd.h>
 #include "pagetable.h"
@@ -19,7 +18,7 @@ to accurately parse what optional argument is being inputted*/
 
 int main(int argc, char** argv)
 {
-    FILE* inputFile; //Stores the file argument from the command line
+    FILE* inputFile; //Stores the file argument from the command line 
     uint32_t* convert; //Dynamic array for converting integer vectors into uint32 integer arrays
     int hits = 0; //number of successful lookup functions
     unsigned int localFrame; //local frame variable for outputting options
@@ -29,7 +28,9 @@ int main(int argc, char** argv)
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, memRefAmt = 0, addressnum = 0,argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot = 0; //Only use for outputting logical addresses and their offsets
-    int summary = true, bitmasks = false, logical2physical = true, offset = false, page2frame = true;
+    int summary = true, bitmasks = false, logical2physical = false, offset = false, page2frame = false;
+
+
 
     //Checks for correct amount of command line arguments
     if (argc < 3)
@@ -115,14 +116,14 @@ int main(int argc, char** argv)
     {
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
         uint32_t address = traceItem.addr;
-        if (!test->PageLookup(address))
+        if (!test->PageLookup((unsigned int)address))
         {
             localFrame = frame;
             test->PageInsert(traceItem.addr, frame);
         }
         else
         {
-            localFrame = test->PageLookup(traceItem.addr)->index;
+            localFrame = test->PageLookup(address)->index;
             hits++;
         }
 
@@ -134,7 +135,7 @@ int main(int argc, char** argv)
         {
             if (offset)
             {
-                uint32_t dest = (traceItem.addr & ~maskTot);
+                uint32_t dest = (address & ~maskTot);
                 report_logical2offset(address, (address & ~maskTot));
             }
             else if (logical2physical)
@@ -148,7 +149,7 @@ int main(int argc, char** argv)
                     convert[i] = (uint32_t)(address & (uint32_t)test->GetBitMask()[i]);
                     convert[i] >>= (uint32_t)test->GetShiftArray()[i];
                 }
-                report_pagemap(traceItem.addr, test->levelCount, convert, localFrame);
+                report_pagemap(address, test->levelCount, convert, localFrame);
             }
         }
         if (memRefLim > 0)
@@ -175,7 +176,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
-        report_summary(pagesize, hits, addressnum ,frame, 32);
+        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc());
     }
 
     exit(EXIT_SUCCESS);
