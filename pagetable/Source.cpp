@@ -10,7 +10,8 @@ extern "C" {
 }
 #include "output_mode_helpers.h"
 
-
+/*Reads a file of addresses, and constructs a pagetable of varrying sizes based on command line arguments 
+Based off of which output mode is selected or summary be default the relavent data will be printed out, onto the console*/
 int main(int argc, char** argv)
 {
     FILE* inputFile = NULL; //Stores the file argument from the command line 
@@ -91,7 +92,7 @@ int main(int argc, char** argv)
         levelNum++;
     }
 
-    test = new PAGETABLE(levelNum, levels);
+    PAGETABLE *test = new PAGETABLE(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
 
     //checks for proper file input
@@ -107,8 +108,8 @@ int main(int argc, char** argv)
         maskTot = test->GetMaskTot();
     }
     
-    //iterates through the input file for specified amount of addresses or until reached the end of the file
-    //Outputs during the loop if optional arguments were received
+    /*iterates through the input file for specified amount of addresses or until reached the end of the file
+    Outputs during the loop if optional arguments were received*/
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, traceItem); //Used to keep track where NextAddress is in the file
@@ -131,16 +132,16 @@ int main(int argc, char** argv)
 
         if (!complete)
         {
-            if (offset)
+            if (offset) //if the offset option is set outputs the logical address, and the offset
             {
                 uint32_t dest = (address & ~maskTot);
                 report_logical2offset(address, (address & ~maskTot));
             }
-            else if (logical2physical)
+            else if (logical2physical) //if the logical2physical option is set outputs the address and its physical location
             {
                 report_logical2physical(address, test->FramePlusOffSet(address, localFrame, maskTot ,physMap));
             }
-            else if (page2frame)
+            else if (page2frame) //Writes out the page numbers for the address & the frame
             {
                 convert = new uint32_t[test->levelCount];
                 for (int i = 0; i < test->levelCount; i++) {
@@ -174,7 +175,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
-        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc(*test, pagesize));
+        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc(*test, pagesize, addressnum , hits));
     }
 
     exit(EXIT_SUCCESS);

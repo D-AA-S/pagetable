@@ -142,6 +142,7 @@ void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
     }
 }
 
+//returns the total amount of bits, used for all levels of the structure
 uint32_t PAGETABLE::GetMaskTot()
 {
     uint32_t maskTot = 0;
@@ -152,21 +153,25 @@ uint32_t PAGETABLE::GetMaskTot()
     return maskTot;
 }
 
+//returns the bitMaskArray vector
 std::vector<unsigned int> &PAGETABLE::GetBitMask()
 {
     return bitMaskArray;
 }
 
+//returns the bitMaskArray vector
 std::vector<unsigned int> &PAGETABLE::GetShiftArray() 
 {
     return shiftArray;
 }
 
+//returns the numberOfBits vector
 std::vector<unsigned int> &PAGETABLE::GetNumberOfBits()
 {
     return numberOfBits;
 }
 
+//returns the offset with the frame its assigned to
 uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t mask, unsigned int physmap)
 {
     address = address & ~mask;
@@ -175,12 +180,14 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t m
     return address; 
 }
 
-unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize)
+//calculates the amount of bytes needed for the PageTable Structure
+unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize, int addresses, int hits)
 {
     unsigned int byteTot = 0;
     for (int i = 0; i < instance.levelCount; i++) 
     {
-        byteTot = byteTot + (pow(2, (numberOfBits[i])))*4 + pagesize;
+        int misses = addresses - hits;
+        byteTot = misses * sizeof(LEVEL) + sizeof(PAGETABLE);
     }
     return byteTot;
 }
