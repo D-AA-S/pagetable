@@ -46,5 +46,5 @@ public:
     std::vector<unsigned int> &GetNumberOfBits();
     std::vector<unsigned int> &GetShiftArray();
     uint32_t FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t mask, unsigned int physmap);
-    unsigned int ByteCalc();
+    unsigned int ByteCalc(PAGETABLE instance, int pagesize);
 };

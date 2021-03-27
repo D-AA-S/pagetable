@@ -123,7 +123,7 @@ int main(int argc, char** argv)
         {
             localFrame = test->PageLookup(traceItem->addr)->index;
             hits++;
-        }
+        }*/
 
         if (!memRefLim > 0) {
             complete = (scanningProg == 0);
@@ -174,7 +174,7 @@ int main(int argc, char** argv)
             levels.pop_back();
         }
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
-        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc());
+        report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc(*test, pagesize));
     }
 
     exit(EXIT_SUCCESS);

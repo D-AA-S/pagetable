@@ -175,8 +175,12 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t m
     return address; 
 }
 
-unsigned int PAGETABLE::ByteCalc()
+unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize)
 {
     unsigned int byteTot = 0;
+    for (int i = 0; i < instance.levelCount; i++) 
+    {
+        byteTot = byteTot + (pow(2, (numberOfBits[i])))*4 + pagesize;
+    }
     return byteTot;
 }
