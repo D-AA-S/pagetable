@@ -15,19 +15,16 @@ int main(int argc, char** argv)
 {
     FILE* inputFile = NULL; //Stores the file argument from the command line 
     uint32_t* convert = NULL; //Dynamic array for converting integer vectors into uint32 integer arrays
-    PAGETABLE* test = NULL; //Variable that stores the pagetable
     int hits = 0; //number of successful lookup functions
     unsigned int localFrame = 0; //local frame variable for outputting options
     int physMap = 0; //total amount of bits distributed for levels
-    p2AddrTr traceItem; //Used for the Next Address function
+    p2AddrTr* traceItem = new p2AddrTr(); //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, memRefAmt = 0, addressnum = 0,argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot = 0; //Only use for outputting logical addresses and their offsets
     //booleans to handle optional arguments
     int summary = true, bitmasks = false, logical2physical = false, offset = false, page2frame = false;
-
-
 
     //Checks for correct amount of command line arguments
     if (argc < 3)
@@ -114,17 +111,16 @@ int main(int argc, char** argv)
     //Outputs during the loop if optional arguments were received
     while (!complete)
     {
-        int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
-        uint32_t address = traceItem.addr;
-        localFrame = frame;
-        if (!test->PageLookup((unsigned int)address))
+        int scanningProg = NextAddress(inputFile, traceItem); //Used to keep track where NextAddress is in the file
+        uint32_t address = traceItem->addr;
+        if (test->PageLookup(traceItem->addr) == NULL)
         {
             localFrame = frame;
-            test->PageInsert(traceItem.addr, frame);
+            test->PageInsert(traceItem->addr, frame);
         }
         else
         {
-            localFrame = test->PageLookup(address)->index;
+            localFrame = test->PageLookup(traceItem->addr)->index;
             hits++;
         }
 

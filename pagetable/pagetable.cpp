@@ -78,30 +78,32 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress) //need to finish this fu
 {
     MAP* map = new MAP();
     unsigned int currentDepth;
-    LEVEL* current = RootNodePtr;
+    LEVEL current = *RootNodePtr;
 
     for (int i = 0; i < levelCount; i++)
     {
-        currentDepth = current->DepthOfLevel;
+        currentDepth = current.DepthOfLevel;
         unsigned int page = LogicalToPage(LogicalAddress, bitMaskArray[i], shiftArray[i]);
         if (currentDepth == levelCount - 1) // We are at the maps. Check to see if the map exisits. If it doesn't, return null. If it does, return the map!
         {
-            if (current->MapPtr == NULL)
+            if (current.MapPtr == NULL)
                 return NULL;
-            else if (current->MapPtr->at(page).validFrame == false)
+            else if (current.MapPtr->at(page).validFrame == false)
                 return NULL;
             else
             {
-                map = &(current->MapPtr->at(page));
+                map = &(current.MapPtr->at(page));
                 return map;
             }
         }
         else
         {
-            if (current->NextLevelPtr == NULL)
+            if (current.NextLevelPtr == NULL)
+                return NULL;
+            else if (current.NextLevelPtr->at(page) == NULL)
                 return NULL;
             else
-                current = current->NextLevelPtr->at(page);
+                current = *(current.NextLevelPtr->at(page));
         }
     }
 }
