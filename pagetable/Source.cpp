@@ -10,8 +10,23 @@ extern "C" {
 }
 #include "output_mode_helpers.h"
 
-/*Reads a file of addresses, and constructs a pagetable of varying sizes based on command line arguments 
-Based off of which output mode is selected or summary be default the relavent data will be printed out, onto the console*/
+/**
+ * Reads a file of addresses, and constructs a pagetable of varying sizes based on command line arguments. 
+ * The user can choose between many optional arguments.
+ * 
+ * For example:
+ * -n N: Process only the first N memory references. Processes all addresses if not present.
+ * 
+ * -o mode: The user can choose what kind of information they want outputted to the console. 
+ *          These options are "bitmasks", "logical2physical", "page2frame", "offset", and "summary".
+ * 
+ * bitmasks: Write out the bitmasks for each level starting with the highest level, one per line. 
+ * logical2physical: Each logical address is mapped to a physical address. 
+ * page2frame: The page numbers for each level are shown followed by the frame number.
+ * offset: Show themapping between logical addresses and theiroffset.
+ * summary: Showsummary statistics.  This is the default argument if -o is not specified.
+ * 
+ */
 int main(int argc, char** argv)
 {
     FILE* inputFile = NULL; //Stores the file argument from the command line 

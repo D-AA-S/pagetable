@@ -8,7 +8,7 @@ const int SYSTEMSIZE = 32;  // The bit size of the machine set to a constant of 
 unsigned int frame = 0; // Global variable to hold the working frames
 
 /**
- * MAP()
+ * MAP::MAP()
  * 
  * This is the default MAP constructor. It initializes the member variables to a default amount.
  */
@@ -19,7 +19,7 @@ MAP::MAP()
 }
 
 /**
- * MAP(int index, bool validFrame)
+ * MAP::MAP(int index, bool validFrame)
  *
  * This is the MAP constructor. This constructor is to be used when a page needs to be inserted.
  * It sets the index to the current frame available and sets the validFrame boolean to true;
@@ -34,7 +34,7 @@ MAP::MAP(int index, bool validFrame)
 }
 
 /**
- * LEVEL(int depth, PAGETABLE& PageTable)
+ * LEVEL::LEVEL(int depth, PAGETABLE& PageTable)
  *
  * This is the LEVEL constructor. This constructor is to be used when a new LEVEL needs to be
  * instantiated. It sets DepthofLevel to the next lowest depth and initializes the PageTablePtr
@@ -50,20 +50,20 @@ LEVEL::LEVEL(int depth, PAGETABLE& PageTable)
 };
 
 /**
- * PageInsert(unsigned int LogicalAddress, unsigned int Frame)
+ * void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame)
  *
  * This function calls the auxiliary PageInsert function to begin the recursive page walk.
  * 
  * @param LogicalAddress: The logical address to be translated to a page and inserted into the PageTable
  * @param Frame: The value of the currently available frame.
  */
-void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame) // Used to add new entries to the page table when we have discovered that a page has not yet been allocated(PageLookup returns NULL).
+void PAGETABLE::PageInsert(unsigned int LogicalAddress, unsigned int Frame)
 {
     PageInsert(RootNodePtr, LogicalAddress, Frame);
 }
 
 /**
- * PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame)
+ * void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigned int Frame)
  *
  * This function is the auxiliary PageInsert Function. This function calls itself when it needs to traverse
  * further into the PageTable. It inserts the page at the correct index in the MAP when it reaches the bottom.
@@ -104,7 +104,7 @@ void PAGETABLE::PageInsert(LEVEL* levelPtr, unsigned int LogicalAddress, unsigne
 }
 
 /**
- * PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
+ * PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
  *
  * This is the PAGETABLE constructor. This is expected to only be called once because there should
  * only be one instance of the PAGETABLE. The PageTable is a tree data structure consisting of LEVEL
@@ -131,7 +131,7 @@ PAGETABLE::PAGETABLE(int levCount, std::vector<unsigned int> numOfBits)
 };
 
 /**
- * PageLookup(unsigned int LogicalAddress)
+ * MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress)
  *
  * PageLookup is intended to be called before the PageInsert function. PageLookup determines whether there already exists a valid
  * MAP for the LogicalAddress in the PageTable. If there is a valid MAP, then return a pointer to that MAP. If there doesn't exists
@@ -174,7 +174,7 @@ MAP* PAGETABLE::PageLookup(unsigned int LogicalAddress)
 }
 
 /**
- * LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
+ * unsigned int PAGETABLE::LogicalToPage(unsigned int LogicalAddress, unsigned int Mask, unsigned int Shift)
  *
  * LogicalToPage performs the translation from the Logical address to a page in the PageTable.
  * The page is used to find the correct index either in the vector of LEVEL pointers or the
@@ -192,11 +192,13 @@ unsigned int PAGETABLE::LogicalToPage(unsigned int LogicalAddress, unsigned int 
 }
 
 
-/*void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
-*This function creates the level mask for each individual level based on the amout of bits
-*
-*@Param bitsPerLev: This is a vector that contains that amount of bits per level
-*/
+/**
+ * void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
+ * 
+ * This function creates the level mask for each individual level based on the amout of bits.
+ *
+ *@param bitsPerLev: This is a vector that contains that amount of bits per level
+ */
 void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
 {
     unsigned int tempBitMask = 0b0;
@@ -214,11 +216,13 @@ void PAGETABLE::LevelMaskCalc(std::vector<unsigned int> bitsPerLev)
     }
 }
 
-/*void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
-* this function creates the bitshifts for each individual level based on the amounts of bits per level
-* 
-* @Param bitsPerLev: This is a vector that contains that amount of bits per level
-*/
+/**
+ * void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
+ * 
+ * This function creates the bitshifts for each individual level based on the amounts of bits per level.
+ * 
+ *@param bitsPerLev: This is a vector that contains that amount of bits per level
+ */
 void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
 {
     int shift = 0;
@@ -229,11 +233,13 @@ void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
     }
 }
 
-/*void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
-* this function creates the bitshifts for each individual level based on the amounts of bits per level
-*
-* returns the total amount of bits, used for all levels of the structure
-*/
+/** 
+ * uint32_t PAGETABLE::GetMaskTot()
+ * 
+ * This function creates the bitshifts for each individual level based on the amounts of bits per level
+ * 
+ * Returns the total amount of bits, used for all levels of the structure
+ */
 uint32_t PAGETABLE::GetMaskTot()
 {
     uint32_t maskTot = 0;
@@ -244,44 +250,48 @@ uint32_t PAGETABLE::GetMaskTot()
     return maskTot;
 }
 
-/*std::vector<unsigned int> &PAGETABLE::GetBitMask()
-* 
-* returns the bitMaskArray vector
-*/
+/**
+ * std::vector<unsigned int> &GetBitMask()
+ * 
+ * Returns the bitMaskArray vector
+ */
 std::vector<unsigned int> &PAGETABLE::GetBitMask()
 {
     return bitMaskArray;
 }
 
 
-/*vector<unsigned int> &PAGETABLE::GetShiftArray() 
-*
-* returns the bitshift vector
-*/
+/**
+ * std::vector<unsigned int> &PAGETABLE::GetShiftArray() 
+ *
+ * Returns the bitshift vector
+ */
 std::vector<unsigned int> &PAGETABLE::GetShiftArray() 
 {
     return shiftArray;
 }
 
-//returns the numberOfBits vector
-/*std::vector<unsigned int> &PAGETABLE::GetNumberOfBits()
-*
-* returns the numberOfBits vector
-*/
+/**
+ * std::vector<unsigned int> &PAGETABLE::GetNumberOfBits()
+ *
+ * Returns the numberOfBits vector
+ */
 std::vector<unsigned int> &PAGETABLE::GetNumberOfBits()
 {
     return numberOfBits;
 }
 
 
-/*void PAGETABLE::ShiftAryCalc(std::vector<unsigned int> bitsPerLev)
-* returns the offset with the frame its assigned to
-* 
-* @Param address: This is the address that the main function is currently processing
-* @Param frame: this is the frame that the address will be assigned to
-* @Param mask: the combined mask of all the seperate levels
-* @Param physmap: total amount of bits taken up by the levels
-*/
+/**
+ * uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t mask, unsigned int physmap)
+ * 
+ * Returns the offset with the frame its assigned to
+ * 
+ * @param address: This is the address that the main function is currently processing
+ * @param frame: this is the frame that the address will be assigned to
+ * @param mask: the combined mask of all the seperate levels
+ * @param physmap: total amount of bits taken up by the levels
+ */
 uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t mask, unsigned int physmap)
 {
     address = address & ~mask;
@@ -290,15 +300,16 @@ uint32_t PAGETABLE::FramePlusOffSet(uint32_t address, uint32_t frame, uint32_t m
     return address; 
 }
 
-/*unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize, int addresses, int hits)
-* 
-* calculates the total number of bytes the pagetable needs
-*
-* @Param instance: the PageTable structure
-* @Param pagesize: calculated number of bytes for a page
-* @Param addresses: the total number of addresses processed
-* @Param hits: the number of addresses that were found in pagelookup
-*/
+/**
+ * unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize, int addresses, int hits)
+ * 
+ * Calculates the total number of bytes the pagetable needs
+ *
+ * @param instance: the PageTable structure
+ * @param pagesize: calculated number of bytes for a page
+ * @param addresses: the total number of addresses processed
+ * @param hits: the number of addresses that were found in pagelookup
+ */
 unsigned int PAGETABLE::ByteCalc(PAGETABLE instance, int pagesize, int addresses, int hits)
 {
     unsigned int byteTot = 0;

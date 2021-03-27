@@ -1,13 +1,13 @@
-summary for 4 4 8
+[cssc3553@edoras a3]$ pagetable -o summary trace.sample.tr 4 4 8
 Page size: 65536 bytes
 Addresses processed: 224450
 Hits: 223478 (99.57%), Misses 972 (0.43%)
 Frames allocated: 972
-Bytes used:  0
+Bytes used:  31216
 
-summary for 16
+[cssc3553@edoras a3]$ pagetable -o summary trace.sample.tr 16
 Page size: 65536 bytes
 Addresses processed: 224450
 Hits: 223478 (99.57%), Misses 972 (0.43%)
 Frames allocated: 972
-Bytes used:  327680
+Bytes used:  31216
