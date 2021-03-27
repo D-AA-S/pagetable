@@ -109,7 +109,7 @@ int main(int argc, char** argv)
     }
     
     /*iterates through the input file for specified amount of addresses or until reached the end of the file
-    Outputs during the loop if optional arguments were received*/
+    * Outputs during the loop if optional arguments were received*/
     while (!complete)
     {
         int scanningProg = NextAddress(inputFile, traceItem); //Used to keep track where NextAddress is in the file
