@@ -177,6 +177,5 @@ int main(int argc, char** argv)
         unsigned int pagesize = pow(2,(SYSTEMSIZE - physMap));
         report_summary(pagesize, hits, addressnum ,frame, test->ByteCalc(*test, pagesize, addressnum , hits));
     }
-
     exit(EXIT_SUCCESS);
 }
