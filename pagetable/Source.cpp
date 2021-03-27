@@ -11,23 +11,20 @@ extern "C" {
 #include "output_mode_helpers.h"
 
 
-
-/*Receives optional argument from main function, and converts cmdLineArg to lowercase only
-to accurately parse what optional argument is being inputted*/
-
-
 int main(int argc, char** argv)
 {
-    FILE* inputFile; //Stores the file argument from the command line 
-    uint32_t* convert; //Dynamic array for converting integer vectors into uint32 integer arrays
+    FILE* inputFile = NULL; //Stores the file argument from the command line 
+    uint32_t* convert = NULL; //Dynamic array for converting integer vectors into uint32 integer arrays
+    PAGETABLE* test = NULL; //Variable that stores the pagetable
     int hits = 0; //number of successful lookup functions
-    unsigned int localFrame; //local frame variable for outputting options
+    unsigned int localFrame = 0; //local frame variable for outputting options
     int physMap = 0; //total amount of bits distributed for levels
     p2AddrTr traceItem; //Used for the Next Address function
     bool complete = false; //Boolean to track file scanning process
     std::vector<unsigned int> levels; //Stores the amount of bits that each level will use
     int memRefLim = 0, memRefAmt = 0, addressnum = 0,argVal = 0, levelNum = 0;//Captures command line argument values
     uint32_t maskTot = 0; //Only use for outputting logical addresses and their offsets
+    //booleans to handle optional arguments
     int summary = true, bitmasks = false, logical2physical = false, offset = false, page2frame = false;
 
 
@@ -76,12 +73,15 @@ int main(int argc, char** argv)
             break;
         }
     }
+
     //checks for atleast 1 level of bits after the file argument
     if (optind+1 == argc) 
     {
         std::cout << "No argument have been imputted for the bits per level/levels" << std::endl; 
         exit(EXIT_FAILURE);
     }
+
+    //
     for (int i = optind + 1; i < argc; i++)
     {
         levels.push_back(atoi(argv[i]));
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
         levelNum++;
     }
 
-    PAGETABLE* test = new PAGETABLE(levelNum, levels);
+    test = new PAGETABLE(levelNum, levels);
     inputFile = fopen(argv[optind], "r");
 
     //checks for proper file input
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
         int scanningProg = NextAddress(inputFile, &traceItem); //Used to keep track where NextAddress is in the file
         uint32_t address = traceItem.addr;
         localFrame = frame;
-        /*if (!test->PageLookup((unsigned int)address))
+        if (!test->PageLookup((unsigned int)address))
         {
             localFrame = frame;
             test->PageInsert(traceItem.addr, frame);
@@ -126,12 +126,13 @@ int main(int argc, char** argv)
         {
             localFrame = test->PageLookup(address)->index;
             hits++;
-        }*/
+        }
 
         if (!memRefLim > 0) {
             complete = (scanningProg == 0);
             addressnum++;
         }
+
         if (!complete)
         {
             if (offset)
