@@ -28,7 +28,6 @@ class PAGETABLE
 {
 public:
     int levelCount; //number of levels in the system
-    //LEVEL rootLevel;
     LEVEL* RootNodePtr; // Contains the address of LEVEL 0
     PAGETABLE(int levCount, std::vector<unsigned int> numOfBits);
     MAP* PageLookup(unsigned int LogicalAddress);

@@ -10,12 +10,6 @@ extern "C" {
 }
 #include "output_mode_helpers.h"
 
-
-
-/*Receives optional argument from main function, and converts cmdLineArg to lowercase only
-to accurately parse what optional argument is being inputted*/
-
-
 int main(int argc, char** argv)
 {
     FILE* inputFile = NULL; //Stores the file argument from the command line 
@@ -123,7 +117,7 @@ int main(int argc, char** argv)
         {
             localFrame = test->PageLookup(traceItem->addr)->index;
             hits++;
-        }*/
+        }
 
         if (!memRefLim > 0) {
             complete = (scanningProg == 0);
